@@ -515,8 +515,14 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 .footer{background:var(--night);color:var(--on-night-2);padding-block:var(--s8) var(--s6);
   border-top:1px solid var(--night-3)}
 .footer-grid{display:grid;gap:var(--s7)}
-@media (min-width:760px){ .footer-grid{grid-template-columns:minmax(0,2fr) repeat(2,minmax(0,1fr))} }
-@media (min-width:1040px){ .footer-grid{grid-template-columns:minmax(0,2.2fr) repeat(3,minmax(0,1fr));gap:var(--s8)} }
+/* the contact column is sized to hold the email address on one line —
+   it is the longest unbreakable token on the page */
+@media (min-width:760px){
+  .footer-grid{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.4fr)}
+}
+@media (min-width:1040px){
+  .footer-grid{grid-template-columns:minmax(0,1.9fr) minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr);gap:var(--s8)}
+}
 .footer-brand img{height:96px;width:auto;margin-bottom:var(--s4)}
 .footer-brand p{font-size:14.5px;max-width:34ch;color:var(--on-night-2)}
 .footer h2{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.13em;
@@ -524,7 +530,7 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 .footer ul{list-style:none;display:grid;gap:var(--s3)}
 .footer a{color:var(--on-night-2);text-decoration:none;font-size:14.5px}
 @media (hover:hover) and (pointer:fine){ .footer a:hover{color:var(--on-night)} }
-.footer .mono{font-family:var(--mono);font-size:14px;word-break:break-word}
+.footer .mono{font-family:var(--mono);font-size:13px;overflow-wrap:break-word}
 .footer-base{margin-top:var(--s8);padding-top:var(--s5);border-top:1px solid var(--night-3);
   display:flex;flex-wrap:wrap;gap:var(--s3) var(--s6);justify-content:space-between;
   font-size:13px;color:var(--on-night-2)}
