@@ -958,7 +958,7 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
           id="request-form"
           name="walkthrough"
           method="POST"
-          action="/thank-you.html"
+          action="/thank-you/"
           data-netlify="true"
           data-netlify-honeypot="bot-field">
 
@@ -1353,7 +1353,7 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
         submitBtn.setAttribute('aria-busy', 'true');
         submitBtn.textContent = 'Sending…';
       }
-      // No preventDefault: the form POSTs to Netlify and lands on /thank-you.html
+      // No preventDefault: the form POSTs to Netlify and lands on /thank-you/
     });
   }
 })();

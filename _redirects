@@ -1,0 +1,4 @@
+# The success page is canonically /thank-you/ (thank-you/index.html).
+# Send the old flat path there explicitly rather than relying on Pretty URLs
+# to infer it, so the route resolves the same way on every deploy.
+/thank-you.html    /thank-you/    301
