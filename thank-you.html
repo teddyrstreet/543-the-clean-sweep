@@ -112,12 +112,15 @@ h1{font-family:var(--serif);font-size:clamp(38px,7vw,62px);margin-block:var(--s4
 }
 .next ol li span{display:block;color:var(--on-night-2);font-size:14.5px;margin-top:2px}
 
+/* label above value, same as the owner card on the homepage — a side-by-side
+   row wrapped only for the email, which read as an accidental break */
 .contact{margin-top:var(--s6);padding-top:var(--s5);border-top:1px solid var(--night-3);
-  display:grid;gap:var(--s3)}
-.contact div{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s4);align-items:baseline}
+  display:grid;gap:var(--s4)}
+.contact div{display:grid;gap:var(--s1)}
 .contact dt{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--on-night-2);min-width:92px}
-.contact dd{margin:0;font-family:var(--mono);font-size:15px;word-break:break-word}
+  color:var(--on-night-2)}
+.contact dd{margin:0;font-family:var(--mono);font-size:14px;overflow-wrap:break-word}
+@media (min-width:620px){ .contact dd{font-size:15px} }
 .contact a{text-decoration:none;border-bottom:1px solid rgba(233,238,236,.3);padding-bottom:1px}
 @media (hover:hover) and (pointer:fine){
   .contact a:hover{color:var(--aurora);border-bottom-color:var(--aurora)}
