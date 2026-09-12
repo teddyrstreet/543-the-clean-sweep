@@ -1,28 +1,226 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Request received | 543 The Clean Sweep</title>
-  <style>
-    :root{--navy:#071b2c;--cyan:#58d7df;--orange:#f0a64b;--ink:#122633}
-    *{box-sizing:border-box}
-    body{margin:0;min-height:100vh;display:grid;place-items:center;padding:28px;color:white;background:linear-gradient(135deg,rgba(7,27,44,.95),rgba(6,76,96,.82)),url('assets/alaska-aurora.jpeg') center/cover;font:16px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    main{width:min(720px,100%);background:rgba(255,255,255,.94);color:var(--ink);border-radius:24px;padding:42px;box-shadow:0 24px 70px rgba(0,0,0,.35);text-align:center}
-    img{width:150px;max-width:60%;height:auto;margin-bottom:16px}
-    h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:clamp(38px,7vw,58px);line-height:1.05;margin:0 0 14px}
-    p{margin:0 auto 16px;max-width:560px;color:#52676f}
-    a{display:inline-flex;align-items:center;justify-content:center;margin-top:14px;padding:14px 20px;border-radius:9px;background:var(--orange);color:var(--navy);text-decoration:none;font-weight:800}
-    .small{font-size:14px;color:#667980}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Request received | 543 The Clean Sweep</title>
+<meta name="description" content="Your request has been sent to 543 The Clean Sweep in Bethel, Alaska.">
+
+<link rel="icon" href="assets/logo.png" sizes="any">
+<link rel="apple-touch-icon" href="assets/logo.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300..500&family=Public+Sans:wght@400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+/* Same tokens as index.html — this page lives in the night band of the system. */
+:root{
+  --paper:#F5F4F0;
+  --ink:#10192A;
+  --ink-2:#39434F;
+  --muted:#545E6B;
+  --rule:#DBD8CF;
+  --accent:#1A5F86;
+  --night:#0B1420;
+  --night-2:#131F2E;
+  --night-3:#1C2A3A;
+  --on-night:#E9EEEC;
+  --on-night-2:#9EADB4;
+  --aurora:#5BBF93;
+
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --sans:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px;
+  --s6:32px; --s7:48px; --s8:64px; --s9:96px;
+
+  --r1:3px; --r2:8px;
+  --gutter:20px;
+  --ease-out:cubic-bezier(0.23, 1, 0.32, 1);
+}
+@media (min-width:700px){ :root{ --gutter:32px } }
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;min-height:100vh;
+  display:flex;flex-direction:column;
+  background:var(--night);color:var(--on-night);
+  font-family:var(--sans);font-size:17px;line-height:1.62;
+  font-synthesis-weight:none;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+img{max-width:100%;height:auto;display:block}
+h1,h2{margin:0;font-weight:500;line-height:1.06;letter-spacing:-.021em;text-wrap:balance}
+p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+a{color:var(--on-night)}
+:focus-visible{outline:2px solid var(--aurora);outline-offset:2px;border-radius:2px}
+
+.shell{width:100%;max-width:760px;margin-inline:auto;padding-inline:var(--gutter)}
+.label{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--aurora)}
+
+/* aurora glow — the same treated sky used on the request band of the homepage */
+.wrap{
+  position:relative;flex:1 0 auto;
+  padding-block:var(--s8) var(--s9);
+  display:flex;align-items:center;overflow:hidden;
+}
+.wrap::before{
+  content:"";position:absolute;inset:0 0 auto;height:min(60vw,440px);
+  background-image:url('assets/aurora-sky.jpg');
+  background-image:image-set(url('assets/aurora-sky.webp') type('image/webp'),
+                             url('assets/aurora-sky.jpg') type('image/jpeg'));
+  background-image:-webkit-image-set(url('assets/aurora-sky.webp') type('image/webp'),
+                                     url('assets/aurora-sky.jpg') type('image/jpeg'));
+  background-size:cover;background-position:center 30%;
+  opacity:.5;
+  -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.9) 0%,transparent 100%);
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.9) 0%,transparent 100%);
+  pointer-events:none;
+}
+.wrap > *{position:relative;width:100%}
+
+.brand{display:inline-block;margin-bottom:var(--s7)}
+.brand img{height:76px;width:auto}
+
+h1{font-family:var(--serif);font-size:clamp(38px,7vw,62px);margin-block:var(--s4) var(--s5)}
+.lede{font-size:clamp(17px,2vw,20px);line-height:1.55;color:var(--on-night-2);max-width:52ch}
+
+.next{
+  margin-top:var(--s7);padding:var(--s6) var(--s5);
+  background:var(--night-2);border:1px solid var(--night-3);border-radius:var(--r2);
+}
+@media (min-width:620px){ .next{padding:var(--s6)} }
+.next h2{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--on-night-2);margin-bottom:var(--s4)}
+.next ol{margin:0;padding:0;list-style:none;display:grid;gap:0;counter-reset:n}
+.next ol li{
+  counter-increment:n;position:relative;
+  padding:var(--s4) 0 var(--s4) var(--s7);
+  border-bottom:1px solid var(--night-3);
+  color:var(--on-night);font-size:16px;
+}
+.next ol li:last-child{border-bottom:0;padding-bottom:0}
+.next ol li::before{
+  content:counter(n,decimal-leading-zero);position:absolute;left:0;top:var(--s4);
+  font-family:var(--mono);font-size:12px;color:var(--aurora);letter-spacing:.06em;
+}
+.next ol li span{display:block;color:var(--on-night-2);font-size:14.5px;margin-top:2px}
+
+.contact{margin-top:var(--s6);padding-top:var(--s5);border-top:1px solid var(--night-3);
+  display:grid;gap:var(--s3)}
+.contact div{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s4);align-items:baseline}
+.contact dt{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--on-night-2);min-width:92px}
+.contact dd{margin:0;font-family:var(--mono);font-size:15px;word-break:break-word}
+.contact a{text-decoration:none;border-bottom:1px solid rgba(233,238,236,.3);padding-bottom:1px}
+@media (hover:hover) and (pointer:fine){
+  .contact a:hover{color:var(--aurora);border-bottom-color:var(--aurora)}
+}
+
+.actions{margin-top:var(--s7);display:flex;flex-wrap:wrap;gap:var(--s3)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  min-height:48px;padding:var(--s3) var(--s5);
+  font-family:var(--sans);font-size:16px;font-weight:600;line-height:1.2;
+  border:1px solid transparent;border-radius:var(--r1);text-decoration:none;cursor:pointer;
+  transition:background-color 140ms ease,border-color 140ms ease,color 140ms ease,transform 140ms var(--ease-out);
+}
+.btn:active{transform:scale(.975)}
+.btn-light{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.btn-ghost{background:transparent;color:var(--on-night);border-color:rgba(233,238,236,.3)}
+@media (hover:hover) and (pointer:fine){
+  .btn-light:hover{background:#fff;border-color:#fff}
+  .btn-ghost:hover{background:rgba(233,238,236,.09);border-color:rgba(233,238,236,.55)}
+}
+.actions .btn{flex:1 1 auto}
+@media (min-width:560px){ .actions .btn{flex:0 0 auto} }
+
+footer{
+  flex:none;border-top:1px solid var(--night-3);padding-block:var(--s5);
+  font-size:13px;color:var(--on-night-2);
+}
+footer .shell{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);justify-content:space-between}
+
+@media (prefers-reduced-motion: no-preference){
+  .rise{animation:rise 300ms var(--ease-out) both}
+  .rise-1{animation-delay:0ms}
+  .rise-2{animation-delay:45ms}
+  .rise-3{animation-delay:90ms}
+}
+@keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+  .btn:active{transform:none}
+}
+</style>
 </head>
+
 <body>
-  <main>
-    <img src="assets/logo.png" alt="543 The Clean Sweep logo">
-    <h1>Request received.</h1>
-    <p>Thank you for reaching out to 543 The Clean Sweep. Chelsea will review your message and follow up as soon as possible.</p>
-    <p class="small">Preferred contact is email. Business hours are 9 AM–5 PM in Bethel, Alaska.</p>
-    <a href="/">Back to website</a>
-  </main>
+<main class="wrap">
+  <div class="shell">
+    <a class="brand rise rise-1" href="/" aria-label="543 The Clean Sweep — home">
+      <picture>
+        <source srcset="assets/logo.webp" type="image/webp">
+        <img src="assets/logo.png" width="833" height="587" alt="543 The Clean Sweep">
+      </picture>
+    </a>
+
+    <p class="label rise rise-1">Request received</p>
+    <h1 class="rise rise-2">Thank you — your request is in.</h1>
+    <p class="lede rise rise-2">Chelsea will review the details you sent and follow up to arrange the next step. Nothing else is needed from you right now.</p>
+
+    <div class="next rise rise-3">
+      <h2>What happens next</h2>
+      <ol>
+        <li>Chelsea reviews your request
+          <span>Including the space, schedule and priorities you described.</span>
+        </li>
+        <li>She follows up during business hours
+          <span>Mon–Fri, 9 AM–5 PM in Bethel, Alaska.</span>
+        </li>
+        <li>We arrange a walkthrough where one helps
+          <span>For facilities and recurring work, this is how we build an accurate scope.</span>
+        </li>
+      </ol>
+
+      <dl class="contact">
+        <div>
+          <dt>Email</dt>
+          <dd><a href="mailto:543thecleansweep@gmail.com">543thecleansweep@gmail.com</a></dd>
+        </div>
+        <div>
+          <dt>Phone</dt>
+          <dd><a href="tel:+19075458005">907‑545‑8005</a></dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="actions rise rise-3">
+      <a class="btn btn-light" href="/">Back to the website</a>
+      <a class="btn btn-ghost" href="tel:+19075458005">Call 907‑545‑8005</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="shell">
+    <span>© <span id="year">2026</span> 543 The Clean Sweep LLC</span>
+    <span>Alaska Native–owned · Bethel, Alaska</span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
 </body>
 </html>
