@@ -341,9 +341,9 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
   transition:background-color 160ms ease;
 }
 /* The four-column row only earns its keep once the description column is wide
-   enough to set properly. Below 1100px it squeezed to ~190px and broke copy into
+   enough to set properly. Below 1200px it squeezed to ~210px and broke copy into
    five ragged fragments, so tablet and small-laptop widths keep the stacked row. */
-@media (min-width:1100px){
+@media (min-width:1200px){
   /* fixed tag column so every row's columns line up across the list */
   /* 182px = the natural width of the widest tag ("Organizations & homes");
      at 172px it overflowed its column into the gutter. */
@@ -356,10 +356,10 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 /* stacked rows span the full shell, so cap the measure — uncapped it ran to
    ~95 characters at 900-1100px, well past a comfortable reading line */
 .svc .d{color:var(--muted);font-size:15.5px;line-height:1.55;grid-column:2/-1;max-width:60ch}
-@media (min-width:1100px){ .svc .d{grid-column:auto;max-width:none} }
+@media (min-width:1200px){ .svc .d{grid-column:auto;max-width:none} }
 .svc .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
   color:var(--faint);white-space:nowrap;grid-column:2/-1}
-@media (min-width:1100px){ .svc .tag{grid-column:auto;text-align:right} }
+@media (min-width:1200px){ .svc .tag{grid-column:auto;text-align:right} }
 .svc[hidden]{display:none}
 /* filter transition: rows fade+rise into place */
 @media (prefers-reduced-motion: no-preference){
