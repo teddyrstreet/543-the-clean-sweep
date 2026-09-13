@@ -28,7 +28,7 @@
   --night-3:#1C2A3A;
   --on-night:#E9EEEC;
   --on-night-2:#9EADB4;
-  --aurora:#5BBF93;
+  --glow:#F2AE8E;          /* sampled from the riverfront sunset behind this band */
 
   --serif:"Newsreader",Georgia,"Times New Roman",serif;
   --sans:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -58,13 +58,13 @@ h1,h2{margin:0;font-weight:500;line-height:1.06;letter-spacing:-.021em;text-wrap
 p{margin:0}
 ul{margin:0;padding:0;list-style:none}
 a{color:var(--on-night)}
-:focus-visible{outline:2px solid var(--aurora);outline-offset:2px;border-radius:2px}
+:focus-visible{outline:2px solid var(--glow);outline-offset:2px;border-radius:2px}
 
 .shell{width:100%;max-width:760px;margin-inline:auto;padding-inline:var(--gutter)}
 .label{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--aurora)}
+  text-transform:uppercase;color:var(--glow)}
 
-/* aurora glow — the same treated sky used on the request band of the homepage */
+/* riverfront sunset — the same band used on the request section of the homepage */
 .wrap{
   position:relative;flex:1 0 auto;
   padding-block:var(--s8) var(--s9);
@@ -72,13 +72,13 @@ a{color:var(--on-night)}
 }
 .wrap::before{
   content:"";position:absolute;inset:0 0 auto;height:min(60vw,440px);
-  background-image:url('/assets/aurora-sky.jpg');
-  background-image:image-set(url('/assets/aurora-sky.webp') type('image/webp'),
-                             url('/assets/aurora-sky.jpg') type('image/jpeg'));
-  background-image:-webkit-image-set(url('/assets/aurora-sky.webp') type('image/webp'),
-                                     url('/assets/aurora-sky.jpg') type('image/jpeg'));
-  background-size:cover;background-position:center 30%;
-  opacity:.5;
+  background-image:url('/assets/riverfront-1400.jpg');
+  background-image:image-set(url('/assets/riverfront-1400.webp') type('image/webp'),
+                             url('/assets/riverfront-1400.jpg') type('image/jpeg'));
+  background-image:-webkit-image-set(url('/assets/riverfront-1400.webp') type('image/webp'),
+                                     url('/assets/riverfront-1400.jpg') type('image/jpeg'));
+  background-size:cover;background-position:center 38%;
+  opacity:.58;
   -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.9) 0%,transparent 100%);
   mask-image:linear-gradient(to bottom,rgba(0,0,0,.9) 0%,transparent 100%);
   pointer-events:none;
@@ -108,7 +108,7 @@ h1{font-family:var(--serif);font-size:clamp(38px,7vw,62px);margin-block:var(--s4
 .next ol li:last-child{border-bottom:0;padding-bottom:0}
 .next ol li::before{
   content:counter(n,decimal-leading-zero);position:absolute;left:0;top:var(--s4);
-  font-family:var(--mono);font-size:12px;color:var(--aurora);letter-spacing:.06em;
+  font-family:var(--mono);font-size:12px;color:var(--glow);letter-spacing:.06em;
 }
 .next ol li span{display:block;color:var(--on-night-2);font-size:14.5px;margin-top:2px}
 
@@ -123,7 +123,7 @@ h1{font-family:var(--serif);font-size:clamp(38px,7vw,62px);margin-block:var(--s4
 @media (min-width:620px){ .contact dd{font-size:15px} }
 .contact a{text-decoration:none;border-bottom:1px solid rgba(233,238,236,.3);padding-bottom:1px}
 @media (hover:hover) and (pointer:fine){
-  .contact a:hover{color:var(--aurora);border-bottom-color:var(--aurora)}
+  .contact a:hover{color:var(--glow);border-bottom-color:var(--glow)}
 }
 
 .actions{margin-top:var(--s7);display:flex;flex-wrap:wrap;gap:var(--s3)}

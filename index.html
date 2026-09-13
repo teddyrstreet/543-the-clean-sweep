@@ -51,7 +51,7 @@
   --night-3:#1C2A3A;
   --on-night:#E9EEEC;
   --on-night-2:#9EADB4;
-  --aurora:#5BBF93;
+  --glow:#F2AE8E;          /* sampled from the riverfront sunset behind this band */
   --warn:#8C3417;
   --warn-wash:#F7E9E3;
 
@@ -113,7 +113,7 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
   outline-offset:2px;
   border-radius:2px;
 }
-.on-dark :focus-visible,.night :focus-visible{outline-color:var(--aurora)}
+.on-dark :focus-visible,.night :focus-visible{outline-color:var(--glow)}
 
 .skip{
   position:absolute;left:var(--s4);top:-100px;z-index:100;
@@ -255,12 +255,13 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 }
 
 /* ============================================================ HERO */
-.hero{padding-block:var(--s8) var(--s9);border-bottom:1px solid var(--rule)}
-@media (min-width:960px){ .hero{padding-block:var(--s9) var(--s9)} }
-@media (min-width:1200px){ .hero{padding-block:var(--s9) var(--s10)} }
+.hero{padding-block:var(--s7) var(--s8);border-bottom:1px solid var(--rule);overflow-x:clip}
+@media (min-width:960px){ .hero{padding-block:var(--s8) var(--s8)} }
+@media (min-width:1200px){ .hero{padding-block:var(--s8) var(--s9)} }
 .hero-grid{display:grid;gap:var(--s7)}
 @media (min-width:1000px){
-  .hero-grid{grid-template-columns:minmax(0,7fr) minmax(0,4fr);gap:var(--s9);align-items:end}
+  /* type column leads; the plate takes the right track and bleeds past the shell */
+  .hero-grid{grid-template-columns:minmax(0,7fr) minmax(0,4.4fr);gap:var(--s8);align-items:center}
 }
 .hero h1{margin-bottom:var(--s5)}
 .hero .lede{margin-bottom:var(--s6)}
@@ -268,12 +269,74 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 .hero-actions .btn{flex:1 1 auto;min-width:190px}
 @media (min-width:560px){ .hero-actions .btn{flex:0 0 auto} }
 
-.hero-facts{display:grid;gap:0;border-top:1px solid var(--rule)}
+/* ---- hero plate: full-bleed band on phones, contained plate on desktop ---- */
+.hero-figure{margin:0;position:relative}
+.hero-figure img{
+  width:100%;height:auto;display:block;
+  background:var(--paper-2);           /* holds the box before decode */
+}
+@media (max-width:999px){
+  /* escape the shell so the band runs edge to edge */
+  .hero-figure{margin-inline:calc(var(--gutter) * -1)}
+  .hero-figure img{aspect-ratio:430/226;object-fit:cover}
+}
+@media (min-width:1000px){
+  /* 4:5 is the crop's shape, but the plate is capped so the hero never grows
+     past roughly two-thirds of the viewport and the next section stays in view */
+  .hero-figure img{aspect-ratio:4/5;object-fit:cover;max-height:min(54vh,540px)}
+  /* Bleed to the right viewport edge: the distance from the shell's content edge
+     to the viewport is half the leftover width plus one gutter. `overflow-x:clip`
+     on .hero absorbs scrollbar rounding so this can never open a scrollbar —
+     clip (not hidden) does not create a scroll container, so sticky still works. */
+  .hero-figure{
+    margin-right:calc(-1 * ((100vw - min(var(--shell), 100vw)) / 2 + var(--gutter)));
+  }
+}
+
+/* a specification strip spanning the whole hero, not a column item — keeping it
+   out of the type column is what stops the hero growing past the viewport */
+.hero-facts{display:grid;gap:0 var(--s5);border-top:1px solid var(--rule);margin-top:var(--s7)}
 .hero-facts div{display:grid;gap:var(--s1);padding-block:var(--s4);border-bottom:1px solid var(--rule)}
+@media (min-width:380px){ .hero-facts{grid-template-columns:1fr 1fr} }
+@media (min-width:900px){
+  .hero-facts{grid-template-columns:repeat(4,1fr);column-gap:var(--s7)}
+  .hero-facts div{border-bottom:0}
+}
 .hero-facts dt{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
 .hero-facts dd{margin:0;font-size:16px;color:var(--ink);font-weight:500}
 .hero-facts dd a{color:var(--ink);text-decoration:none;font-family:var(--mono);font-size:15px}
 @media (hover:hover) and (pointer:fine){ .hero-facts dd a:hover{color:var(--accent)} }
+
+/* ============================================================ FULL-BLEED PLATE */
+.bleed{margin:0;background:var(--paper-2)}
+.bleed img{width:100%;height:auto;display:block;aspect-ratio:5/2;object-fit:cover}
+@media (max-width:819px){
+  .bleed img{aspect-ratio:430/253}
+}
+.bleed figcaption{
+  max-width:var(--shell);margin-inline:auto;padding:var(--s4) var(--gutter) 0;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;color:var(--faint);
+  display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);
+}
+.bleed figcaption b{color:var(--ink-2);font-weight:500}
+.bleed-wrap{padding-block:0 var(--s6);background:var(--paper-2)}
+
+/* One restrained reveal: a 2.5:1 photograph appearing instantly at full width is
+   abrupt in a way a text block is not. Fires once, at 20% visibility.
+   The hidden state is gated on data-reveal, which only JS sets — so with JS off,
+   or if the observer never fires, the photograph is simply visible. */
+@media (prefers-reduced-motion: no-preference){
+  .bleed[data-reveal] img{
+    clip-path:inset(0 0 8% 0);opacity:0;
+    transition:clip-path 420ms var(--ease-out), opacity 420ms var(--ease-out);
+  }
+  .bleed[data-reveal] figcaption{
+    opacity:0;transform:translateY(6px);
+    transition:opacity 300ms var(--ease-out) 40ms, transform 300ms var(--ease-out) 40ms;
+  }
+  .bleed[data-reveal][data-shown="true"] img{clip-path:inset(0 0 0 0);opacity:1}
+  .bleed[data-reveal][data-shown="true"] figcaption{opacity:1;transform:none}
+}
 
 /* ============================================================ AUDIENCE SPLIT */
 .paths{display:grid;gap:1px;background:var(--rule);border-block:1px solid var(--rule)}
@@ -420,20 +483,20 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 }
 .night::before{
   content:"";position:absolute;inset:0 0 auto;height:min(46vw,420px);
-  background-image:url('assets/aurora-sky.jpg');
-  background-image:image-set(url('assets/aurora-sky.webp') type('image/webp'),
-                             url('assets/aurora-sky.jpg') type('image/jpeg'));
-  background-image:-webkit-image-set(url('assets/aurora-sky.webp') type('image/webp'),
-                                     url('assets/aurora-sky.jpg') type('image/jpeg'));
-  background-size:cover;background-position:center 30%;
-  opacity:.5;
+  background-image:url('assets/riverfront-1400.jpg');
+  background-image:image-set(url('assets/riverfront-1400.webp') type('image/webp'),
+                             url('assets/riverfront-1400.jpg') type('image/jpeg'));
+  background-image:-webkit-image-set(url('assets/riverfront-1400.webp') type('image/webp'),
+                                     url('assets/riverfront-1400.jpg') type('image/jpeg'));
+  background-size:cover;background-position:center 38%;
+  opacity:.58;
   -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.9) 0%,transparent 100%);
   mask-image:linear-gradient(to bottom,rgba(0,0,0,.9) 0%,transparent 100%);
   pointer-events:none;
 }
 .night > *{position:relative}
 .night h2,.night .h3{color:var(--on-night)}
-.night .label{color:var(--aurora)}
+.night .label{color:var(--glow)}
 .night .lede{color:var(--on-night-2)}
 .contact-grid{display:grid;gap:var(--s7)}
 @media (min-width:980px){
@@ -446,7 +509,7 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 .contact-points a{color:var(--on-night);font-family:var(--mono);font-size:16px;text-decoration:none;
   border-bottom:1px solid rgba(233,238,236,.3);padding-bottom:1px;word-break:break-word}
 @media (hover:hover) and (pointer:fine){
-  .contact-points a:hover{color:var(--aurora);border-bottom-color:var(--aurora)}
+  .contact-points a:hover{color:var(--glow);border-bottom-color:var(--glow)}
 }
 
 /* ============================================================ FORM */
@@ -467,7 +530,7 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
   transition:background-color 160ms ease, color 160ms ease;
 }
 .seg-track input:checked + span{background:var(--paper);color:var(--ink)}
-.seg-track input:focus-visible + span{outline:2px solid var(--aurora);outline-offset:2px}
+.seg-track input:focus-visible + span{outline:2px solid var(--glow);outline-offset:2px}
 @media (hover:hover) and (pointer:fine){
   .seg-track input:not(:checked):hover + span{color:var(--on-night)}
 }
@@ -493,10 +556,10 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 }
 .field input::placeholder,.field textarea::placeholder{color:#7E8D97}
 .field input:focus,.field select:focus,.field textarea:focus{
-  border-color:var(--aurora);background:#0E1A28;
+  border-color:var(--glow);background:#0E1A28;
 }
 .field input:focus-visible,.field select:focus-visible,.field textarea:focus-visible{
-  outline:2px solid var(--aurora);outline-offset:1px;
+  outline:2px solid var(--glow);outline-offset:1px;
 }
 .field [aria-invalid="true"]{border-color:#E08A6B}
 .err{
@@ -556,7 +619,7 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
   text-underline-offset:4px;
 }
 @media (hover:hover) and (pointer:fine){
-  .contact-points a:hover{text-decoration-color:var(--aurora)}
+  .contact-points a:hover{text-decoration-color:var(--glow)}
 }
 
 /* ============================================================ MOBILE CTA BAR */
@@ -583,6 +646,7 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
   .rise-2{animation-delay:45ms}
   .rise-3{animation-delay:90ms}
   .rise-4{animation-delay:135ms}
+  .rise-5{animation-delay:180ms}
 }
 @keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
 
@@ -653,7 +717,8 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 
   <!-- ==================== HERO ==================== -->
   <section class="hero">
-    <div class="shell hero-grid">
+    <div class="shell">
+      <div class="hero-grid">
       <div>
         <p class="label rise rise-1" style="margin-bottom:var(--s5)">Bethel, Alaska · Alaska Native–owned</p>
         <h1 class="display rise rise-2">Clean spaces.<br>Dependable service.</h1>
@@ -662,9 +727,38 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
           <a class="btn btn-primary" href="#request">Request a walkthrough <span class="arw" aria-hidden="true">→</span></a>
           <a class="btn btn-secondary" href="#services">See what we clean</a>
         </div>
+
       </div>
 
-      <dl class="hero-facts rise rise-4">
+      <figure class="hero-figure rise rise-5">
+        <picture>
+          <!-- phones get a genuinely different frame, not a squeezed desktop crop -->
+          <source media="(max-width: 999px)" type="image/avif"
+                  srcset="assets/hero-winter-wide-430.avif 430w, assets/hero-winter-wide-640.avif 640w, assets/hero-winter-wide-860.avif 860w"
+                  sizes="100vw">
+          <source media="(max-width: 999px)" type="image/webp"
+                  srcset="assets/hero-winter-wide-430.webp 430w, assets/hero-winter-wide-640.webp 640w, assets/hero-winter-wide-860.webp 860w"
+                  sizes="100vw">
+          <source media="(max-width: 999px)"
+                  srcset="assets/hero-winter-wide-430.jpg 430w, assets/hero-winter-wide-640.jpg 640w, assets/hero-winter-wide-860.jpg 860w"
+                  sizes="100vw">
+          <source type="image/avif"
+                  srcset="assets/hero-winter-560.avif 560w, assets/hero-winter-840.avif 840w, assets/hero-winter-1400.avif 1400w"
+                  sizes="45vw">
+          <source type="image/webp"
+                  srcset="assets/hero-winter-560.webp 560w, assets/hero-winter-840.webp 840w, assets/hero-winter-1400.webp 1400w"
+                  sizes="45vw">
+          <img src="assets/hero-winter-840.jpg"
+               srcset="assets/hero-winter-560.jpg 560w, assets/hero-winter-840.jpg 840w, assets/hero-winter-1400.jpg 1400w"
+               sizes="45vw"
+               width="840" height="1050"
+               fetchpriority="high" decoding="async"
+               alt="A snow-covered road in Bethel, Alaska at blue hour, curving toward a lit building under power lines and an orange winter sunset.">
+        </picture>
+      </figure>
+      </div>
+
+      <dl class="hero-facts rise rise-5">
         <div>
           <dt>Serving</dt>
           <dd>Bethel, Alaska</dd>
@@ -766,6 +860,40 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
       </div>
     </div>
   </section>
+
+  <!-- ==================== PLACE ==================== -->
+  <div class="bleed-wrap">
+    <figure class="bleed" id="place">
+      <picture>
+        <!-- phones get a taller frame centred on the town, not a squeezed 2.5:1 -->
+        <source media="(max-width: 819px)" type="image/avif"
+                srcset="assets/delta-narrow-430.avif 430w, assets/delta-narrow-640.avif 640w, assets/delta-narrow-860.avif 860w"
+                sizes="100vw">
+        <source media="(max-width: 819px)" type="image/webp"
+                srcset="assets/delta-narrow-430.webp 430w, assets/delta-narrow-640.webp 640w, assets/delta-narrow-860.webp 860w"
+                sizes="100vw">
+        <source media="(max-width: 819px)"
+                srcset="assets/delta-narrow-430.jpg 430w, assets/delta-narrow-640.jpg 640w, assets/delta-narrow-860.jpg 860w"
+                sizes="100vw">
+        <source type="image/avif"
+                srcset="assets/delta-960.avif 960w, assets/delta-1440.avif 1440w, assets/delta-1920.avif 1920w"
+                sizes="100vw">
+        <source type="image/webp"
+                srcset="assets/delta-960.webp 960w, assets/delta-1440.webp 1440w, assets/delta-1920.webp 1920w"
+                sizes="100vw">
+        <img src="assets/delta-1440.jpg"
+             srcset="assets/delta-960.jpg 960w, assets/delta-1440.jpg 1440w, assets/delta-1920.jpg 1920w"
+             sizes="100vw"
+             width="1440" height="576"
+             loading="lazy" decoding="async"
+             alt="Aerial view of Bethel, Alaska in summer — the Kuskokwim River winding through green delta tundra, with the town's warehouses, offices and homes along the near bank.">
+      </picture>
+      <figcaption>
+        <span><b>Bethel, Alaska</b> · Yukon–Kuskokwim Delta</span>
+        <span>Where we walk the site, and where we answer the phone.</span>
+      </figcaption>
+    </figure>
+  </div>
 
   <!-- ==================== SERVICES ==================== -->
   <section class="section" id="services">
@@ -1129,6 +1257,20 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
       header.setAttribute('data-stuck', past ? 'true' : 'false');
       if (ctaBar) ctaBar.setAttribute('data-hidden', past ? 'false' : 'true');
     }, { rootMargin: '-72px 0px 0px 0px' }).observe(hero);
+  }
+
+  /* ---------- full-bleed plate reveal (once) ---------- */
+  var plates = Array.prototype.slice.call(document.querySelectorAll('.bleed'));
+  if (plates.length && 'IntersectionObserver' in window && !reduce.matches) {
+    plates.forEach(function (f) { f.setAttribute('data-reveal', ''); });
+    var plateObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.setAttribute('data-shown', 'true');
+        plateObs.unobserve(e.target);
+      });
+    }, { threshold: 0.2 });
+    plates.forEach(function (f) { plateObs.observe(f); });
   }
 
   /* ---------- current section in nav ---------- */
