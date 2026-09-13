@@ -316,8 +316,10 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 .bleed figcaption{
   max-width:var(--shell);margin-inline:auto;padding:var(--s4) var(--gutter) 0;
   font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;color:var(--faint);
-  display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);
+  display:flex;flex-direction:column;gap:var(--s1);
 }
+/* the place line reads as a label, matching the mono eyebrows used elsewhere */
+.bleed figcaption .place{text-transform:uppercase;letter-spacing:.13em}
 .bleed figcaption b{color:var(--ink-2);font-weight:500}
 .bleed-wrap{padding-block:0 var(--s6);background:var(--paper-2)}
 
@@ -734,26 +736,26 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
         <picture>
           <!-- phones get a genuinely different frame, not a squeezed desktop crop -->
           <source media="(max-width: 999px)" type="image/avif"
-                  srcset="assets/hero-winter-wide-430.avif 430w, assets/hero-winter-wide-640.avif 640w, assets/hero-winter-wide-860.avif 860w"
+                  srcset="assets/hero-yuut-wide-430.avif 430w, assets/hero-yuut-wide-640.avif 640w, assets/hero-yuut-wide-860.avif 860w"
                   sizes="100vw">
           <source media="(max-width: 999px)" type="image/webp"
-                  srcset="assets/hero-winter-wide-430.webp 430w, assets/hero-winter-wide-640.webp 640w, assets/hero-winter-wide-860.webp 860w"
+                  srcset="assets/hero-yuut-wide-430.webp 430w, assets/hero-yuut-wide-640.webp 640w, assets/hero-yuut-wide-860.webp 860w"
                   sizes="100vw">
           <source media="(max-width: 999px)"
-                  srcset="assets/hero-winter-wide-430.jpg 430w, assets/hero-winter-wide-640.jpg 640w, assets/hero-winter-wide-860.jpg 860w"
+                  srcset="assets/hero-yuut-wide-430.jpg 430w, assets/hero-yuut-wide-640.jpg 640w, assets/hero-yuut-wide-860.jpg 860w"
                   sizes="100vw">
           <source type="image/avif"
-                  srcset="assets/hero-winter-560.avif 560w, assets/hero-winter-840.avif 840w, assets/hero-winter-1400.avif 1400w"
+                  srcset="assets/hero-yuut-560.avif 560w, assets/hero-yuut-840.avif 840w, assets/hero-yuut-1400.avif 1400w"
                   sizes="45vw">
           <source type="image/webp"
-                  srcset="assets/hero-winter-560.webp 560w, assets/hero-winter-840.webp 840w, assets/hero-winter-1400.webp 1400w"
+                  srcset="assets/hero-yuut-560.webp 560w, assets/hero-yuut-840.webp 840w, assets/hero-yuut-1400.webp 1400w"
                   sizes="45vw">
-          <img src="assets/hero-winter-840.jpg"
-               srcset="assets/hero-winter-560.jpg 560w, assets/hero-winter-840.jpg 840w, assets/hero-winter-1400.jpg 1400w"
+          <img src="assets/hero-yuut-840.jpg"
+               srcset="assets/hero-yuut-560.jpg 560w, assets/hero-yuut-840.jpg 840w, assets/hero-yuut-1400.jpg 1400w"
                sizes="45vw"
-               width="840" height="1050"
+               width="840" height="728"
                fetchpriority="high" decoding="async"
-               alt="A snow-covered road in Bethel, Alaska at blue hour, curving toward a lit building under power lines and an orange winter sunset.">
+               alt="Yuut Elitnaurviat, the People’s Learning Center in Bethel, Alaska, on a clear winter day, with its wind turbines standing over the snow.">
         </picture>
       </figure>
       </div>
@@ -867,30 +869,30 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
       <picture>
         <!-- phones get a taller frame centred on the town, not a squeezed 2.5:1 -->
         <source media="(max-width: 819px)" type="image/avif"
-                srcset="assets/delta-narrow-430.avif 430w, assets/delta-narrow-640.avif 640w, assets/delta-narrow-860.avif 860w"
+                srcset="assets/slough-narrow-430.avif 430w, assets/slough-narrow-640.avif 640w, assets/slough-narrow-860.avif 860w"
                 sizes="100vw">
         <source media="(max-width: 819px)" type="image/webp"
-                srcset="assets/delta-narrow-430.webp 430w, assets/delta-narrow-640.webp 640w, assets/delta-narrow-860.webp 860w"
+                srcset="assets/slough-narrow-430.webp 430w, assets/slough-narrow-640.webp 640w, assets/slough-narrow-860.webp 860w"
                 sizes="100vw">
         <source media="(max-width: 819px)"
-                srcset="assets/delta-narrow-430.jpg 430w, assets/delta-narrow-640.jpg 640w, assets/delta-narrow-860.jpg 860w"
+                srcset="assets/slough-narrow-430.jpg 430w, assets/slough-narrow-640.jpg 640w, assets/slough-narrow-860.jpg 860w"
                 sizes="100vw">
         <source type="image/avif"
-                srcset="assets/delta-960.avif 960w, assets/delta-1440.avif 1440w, assets/delta-1920.avif 1920w"
+                srcset="assets/slough-960.avif 960w, assets/slough-1440.avif 1440w, assets/slough-1672.avif 1672w"
                 sizes="100vw">
         <source type="image/webp"
-                srcset="assets/delta-960.webp 960w, assets/delta-1440.webp 1440w, assets/delta-1920.webp 1920w"
+                srcset="assets/slough-960.webp 960w, assets/slough-1440.webp 1440w, assets/slough-1672.webp 1672w"
                 sizes="100vw">
-        <img src="assets/delta-1440.jpg"
-             srcset="assets/delta-960.jpg 960w, assets/delta-1440.jpg 1440w, assets/delta-1920.jpg 1920w"
+        <img src="assets/slough-1440.jpg"
+             srcset="assets/slough-960.jpg 960w, assets/slough-1440.jpg 1440w, assets/slough-1672.jpg 1672w"
              sizes="100vw"
              width="1440" height="576"
              loading="lazy" decoding="async"
-             alt="Aerial view of Bethel, Alaska in summer — the Kuskokwim River winding through green delta tundra, with the town's warehouses, offices and homes along the near bank.">
+             alt="Aerial view of Bethel, Alaska at sunset — Brown's Slough winding through the town and out across the tundra ponds of the Yukon–Kuskokwim Delta.">
       </picture>
       <figcaption>
-        <span><b>Bethel, Alaska</b> · Yukon–Kuskokwim Delta</span>
-        <span>Where we walk the site, and where we answer the phone.</span>
+        <span class="place"><b>Bethel, Alaska</b> · Yukon–Kuskokwim Delta</span>
+        <span>Our home. Our community. The place we serve.</span>
       </figcaption>
     </figure>
   </div>
