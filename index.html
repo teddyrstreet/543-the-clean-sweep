@@ -637,6 +637,8 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 /* loop bracket from the result back up to step 4 */
 .flow-loop-start::after{content:"";position:absolute;right:calc(var(--s6) * -1 + 10px);top:18px;
   height:calc(100% + 52px);width:14px;border:2px dashed var(--accent);border-left:0;border-radius:0 10px 10px 0;opacity:.55}
+.flow-steps a{color:var(--accent);font-weight:500;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+@media (hover:hover) and (pointer:fine){ .flow-steps a:hover{color:var(--accent-2)} }
 .flow-loop-note{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--accent-2);margin:var(--s3) 0 0;text-align:right}
 @media (max-width:520px){ .flow{padding:var(--s5) var(--s5) var(--s4)} .flow-loop-start::after{right:calc(var(--s5) * -1 + 6px)} }
 </style>
@@ -713,7 +715,7 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
       <figure class="flow rise rise-5" aria-labelledby="flow-title">
         <p class="label flow-label" id="flow-title">How it works</p>
         <ol class="flow-steps">
-          <li><span class="flow-dot">1</span><div><b>You reach out</b><span>Call 907-545-8005 or send a request — tell us the space and what matters.</span></div></li>
+          <li><span class="flow-dot">1</span><div><b>You reach out</b><span><a href="#request">Request a cleaning online</a> or call <a href="tel:+19075458005">907‑545‑8005</a> — tell us the space and what matters.</span></div></li>
           <li><span class="flow-dot">2</span><div><b>We walk the site</b><span>Chelsea sees the space in person and asks the right questions.</span></div></li>
           <li><span class="flow-dot">3</span><div><b>You get it in writing</b><span>Services, frequency and price — a clear scope you approve.</span></div></li>
           <li class="flow-loop-start"><span class="flow-dot">4</span><div><b>We clean, on schedule</b><span>Same crew, same checklist, one local point of contact.</span></div></li>
