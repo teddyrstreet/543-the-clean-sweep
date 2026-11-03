@@ -1021,7 +1021,13 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
       </div>
 
       <div class="form-card">
-        <form action='/request-received' id='request-form' method='POST' name='walkthrough' data-netlify='true' netlify-honeypot='bot-field'>
+        <form
+          id="request-form"
+          name="walkthrough"
+          method="POST"
+          action="/request-received.html"
+          data-netlify="true"
+          data-netlify-honeypot="bot-field">
 
           <input type="hidden" name="form-name" value="walkthrough">
           <p class="hp" aria-hidden="true">
