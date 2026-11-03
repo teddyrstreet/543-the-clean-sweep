@@ -269,30 +269,6 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 .hero-actions .btn{flex:1 1 auto;min-width:190px}
 @media (min-width:560px){ .hero-actions .btn{flex:0 0 auto} }
 
-/* ---- hero plate: full-bleed band on phones, contained plate on desktop ---- */
-.hero-figure{margin:0;position:relative}
-.hero-figure img{
-  width:100%;height:auto;display:block;
-  background:var(--paper-2);           /* holds the box before decode */
-}
-@media (max-width:999px){
-  /* escape the shell so the band runs edge to edge */
-  .hero-figure{margin-inline:calc(var(--gutter) * -1)}
-  .hero-figure img{aspect-ratio:430/226;object-fit:cover}
-}
-@media (min-width:1000px){
-  /* 4:5 is the crop's shape, but the plate is capped so the hero never grows
-     past roughly two-thirds of the viewport and the next section stays in view */
-  .hero-figure img{aspect-ratio:4/5;object-fit:cover;max-height:min(54vh,540px)}
-  /* Bleed to the right viewport edge: the distance from the shell's content edge
-     to the viewport is half the leftover width plus one gutter. `overflow-x:clip`
-     on .hero absorbs scrollbar rounding so this can never open a scrollbar —
-     clip (not hidden) does not create a scroll container, so sticky still works. */
-  .hero-figure{
-    margin-right:calc(-1 * ((100vw - min(var(--shell), 100vw)) / 2 + var(--gutter)));
-  }
-}
-
 /* a specification strip spanning the whole hero, not a column item — keeping it
    out of the type column is what stops the hero growing past the viewport */
 .hero-facts{display:grid;gap:0 var(--s5);border-top:1px solid var(--rule);margin-top:var(--s7)}
@@ -435,26 +411,6 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 
 /* ============================================================ PROCESS */
 .process{background:var(--paper-2)}
-.steps{list-style:none;display:grid;gap:0;position:relative}
-.step{position:relative;padding-left:var(--s7);padding-block:var(--s5)}
-.step::before{content:"";position:absolute;left:9px;top:0;bottom:0;width:1px;background:var(--rule-2)}
-.step:first-child::before{top:16px}
-.step:last-child::before{bottom:calc(100% - 16px)}
-.step .dot{position:absolute;left:0;top:9px;width:19px;height:19px;border-radius:50%;
-  background:var(--paper-2);border:1px solid var(--rule-2);display:grid;place-items:center}
-.step .dot::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent)}
-.step .n{font-family:var(--mono);font-size:11px;letter-spacing:.13em;color:var(--faint);display:block;margin-bottom:var(--s2)}
-.step h3{margin-bottom:var(--s2)}
-.step p{color:var(--muted);font-size:15.5px;max-width:38ch}
-@media (min-width:900px){
-  /* gap:0 + per-step padding so the rules meet and read as one continuous spine */
-  .steps{grid-template-columns:repeat(4,1fr);gap:0}
-  .step{padding-left:0;padding-right:var(--s6);padding-top:var(--s7);padding-block-end:0}
-  .step::before{left:0;right:0;top:9px;bottom:auto;width:auto;height:1px}
-  .step:first-child::before{left:9px;top:9px}
-  .step:last-child::before{right:calc(100% - 10px);bottom:auto}
-  .step .dot{top:0;left:0}
-}
 .process-after{margin-top:var(--s7);padding-top:var(--s5);border-top:1px solid var(--rule);
   display:flex;flex-wrap:wrap;gap:var(--s4);align-items:baseline;justify-content:space-between}
 .process-after p{color:var(--muted);font-size:15.5px;max-width:52ch}
@@ -661,6 +617,28 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
   .btn:active{transform:none}
   .filter:active{transform:none}
 }
+
+/* ---- hero workflow diagram ---- */
+.flow{margin:0;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r2);
+  box-shadow:var(--shadow);padding:var(--s6) var(--s6) var(--s5);position:relative}
+.flow-label{color:var(--accent);margin-bottom:var(--s5)}
+.flow-steps{list-style:none;margin:0;padding:0;position:relative}
+.flow-steps li{display:grid;grid-template-columns:36px 1fr;gap:var(--s4);padding-bottom:var(--s5);position:relative}
+.flow-steps li:not(:last-child)::before{content:"";position:absolute;left:17px;top:36px;bottom:0;width:2px;background:var(--rule)}
+.flow-dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--mono);font-size:14px;font-weight:500;color:var(--ink);background:var(--paper);border:1.5px solid var(--rule-2)}
+.flow-steps b{display:block;font-family:var(--sans);font-weight:600;font-size:17px;color:var(--ink);line-height:1.3;padding-top:6px}
+.flow-steps li span:not(.flow-dot){display:block;font-size:14.5px;color:var(--muted);line-height:1.5;margin-top:2px}
+.flow-steps .flow-loop-start .flow-dot{background:var(--accent-wash);border-color:var(--accent);color:var(--accent-2)}
+.flow-done{padding:var(--s4) var(--s4) var(--s4) var(--s4)!important;margin-left:calc(var(--s4) * -1);
+  background:var(--accent-wash);border-radius:var(--r2)}
+.flow-done .flow-dot{background:var(--accent);border-color:var(--accent);color:#fff;font-family:var(--sans);font-size:17px}
+.flow-done b{font-family:var(--serif)!important;font-weight:400!important;font-size:21px!important;letter-spacing:-.01em}
+/* loop bracket from the result back up to step 4 */
+.flow-loop-start::after{content:"";position:absolute;right:calc(var(--s6) * -1 + 10px);top:18px;
+  height:calc(100% + 52px);width:14px;border:2px dashed var(--accent);border-left:0;border-radius:0 10px 10px 0;opacity:.55}
+.flow-loop-note{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--accent-2);margin:var(--s3) 0 0;text-align:right}
+@media (max-width:520px){ .flow{padding:var(--s5) var(--s5) var(--s4)} .flow-loop-start::after{right:calc(var(--s5) * -1 + 6px)} }
 </style>
 </head>
 
@@ -732,31 +710,16 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 
       </div>
 
-      <figure class="hero-figure rise rise-5">
-        <picture>
-          <!-- phones get a genuinely different frame, not a squeezed desktop crop -->
-          <source media="(max-width: 999px)" type="image/avif"
-                  srcset="assets/hero-yuut-wide-430.avif 430w, assets/hero-yuut-wide-640.avif 640w, assets/hero-yuut-wide-860.avif 860w"
-                  sizes="100vw">
-          <source media="(max-width: 999px)" type="image/webp"
-                  srcset="assets/hero-yuut-wide-430.webp 430w, assets/hero-yuut-wide-640.webp 640w, assets/hero-yuut-wide-860.webp 860w"
-                  sizes="100vw">
-          <source media="(max-width: 999px)"
-                  srcset="assets/hero-yuut-wide-430.jpg 430w, assets/hero-yuut-wide-640.jpg 640w, assets/hero-yuut-wide-860.jpg 860w"
-                  sizes="100vw">
-          <source type="image/avif"
-                  srcset="assets/hero-yuut-560.avif 560w, assets/hero-yuut-840.avif 840w, assets/hero-yuut-1400.avif 1400w"
-                  sizes="45vw">
-          <source type="image/webp"
-                  srcset="assets/hero-yuut-560.webp 560w, assets/hero-yuut-840.webp 840w, assets/hero-yuut-1400.webp 1400w"
-                  sizes="45vw">
-          <img src="assets/hero-yuut-840.jpg"
-               srcset="assets/hero-yuut-560.jpg 560w, assets/hero-yuut-840.jpg 840w, assets/hero-yuut-1400.jpg 1400w"
-               sizes="45vw"
-               width="840" height="728"
-               fetchpriority="high" decoding="async"
-               alt="Yuut Elitnaurviat, the People’s Learning Center in Bethel, Alaska, on a clear winter day, with its wind turbines standing over the snow.">
-        </picture>
+      <figure class="flow rise rise-5" aria-labelledby="flow-title">
+        <p class="label flow-label" id="flow-title">How it works</p>
+        <ol class="flow-steps">
+          <li><span class="flow-dot">1</span><div><b>You reach out</b><span>Call 907-545-8005 or send a request — tell us the space and what matters.</span></div></li>
+          <li><span class="flow-dot">2</span><div><b>We walk the site</b><span>Chelsea sees the space in person and asks the right questions.</span></div></li>
+          <li><span class="flow-dot">3</span><div><b>You get it in writing</b><span>Services, frequency and price — a clear scope you approve.</span></div></li>
+          <li class="flow-loop-start"><span class="flow-dot">4</span><div><b>We clean, on schedule</b><span>Same crew, same checklist, one local point of contact.</span></div></li>
+          <li class="flow-done"><span class="flow-dot" aria-hidden="true">✓</span><div><b>A space you don’t have to think about</b><span>Questions or changes? One call, and the scope is updated.</span></div></li>
+        </ol>
+        <p class="flow-loop-note"><span aria-hidden="true">↻</span> Recurring work repeats 4 → ✓ each visit</p>
       </figure>
       </div>
 
@@ -978,36 +941,8 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
         <div>
           <div class="sec-head">
             <h2 class="h2">Simple from walkthrough to clean.</h2>
-            <p class="lede">Professional service starts before the first mop hits the floor.</p>
+            <p class="lede">Every job starts with a walkthrough and a written scope you approve — so the plan and the price are clear before the first mop hits the floor.</p>
           </div>
-
-          <ol class="steps">
-            <li class="step">
-              <span class="dot" aria-hidden="true"></span>
-              <span class="n">Step 01</span>
-              <h3 class="h4">Tell us what you need</h3>
-              <p>Share your location, type of space, schedule, and priorities.</p>
-            </li>
-            <li class="step">
-              <span class="dot" aria-hidden="true"></span>
-              <span class="n">Step 02</span>
-              <h3 class="h4">Walk the site</h3>
-              <p>We review the space and ask the questions needed for an accurate scope.</p>
-            </li>
-            <li class="step">
-              <span class="dot" aria-hidden="true"></span>
-              <span class="n">Step 03</span>
-              <h3 class="h4">Approve the plan</h3>
-              <p>You receive a clear proposal covering services, frequency, and price.</p>
-            </li>
-            <li class="step">
-              <span class="dot" aria-hidden="true"></span>
-              <span class="n">Step 04</span>
-              <h3 class="h4">We get to work</h3>
-              <p>Our team follows the agreed scope and keeps communication clear.</p>
-            </li>
-          </ol>
-
           <div class="process-after">
             <p>For recurring work, the agreed scope and schedule carry forward — with the same point of contact each time.</p>
             <a class="btn btn-secondary" href="#request">Start with a walkthrough</a>
