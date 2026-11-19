@@ -87,3 +87,73 @@ function residentialFurniture({ block, cylinder, partition, glazing, chair, plan
   }
   return [livingRoom, kitchen, bedroom];
 }
+
+// Mess shown in each room before it is cleaned, grouped by checklist task.
+// Coordinates are local to the room. Types: paper, cup, stain, crumbs, trash, bin,
+// smudge (vertical, facing +x/-x/+z/-z), dust, dishes, roll, soap. Items with
+// appear:true show up when their task is checked (restocking) instead of vanishing.
+const facilityMess = [
+  [ // Office
+    [ {t:'paper',x:-2.2,y:.80,z:-2.52,r:.4}, {t:'paper',x:-2.05,y:.81,z:-2.47,r:-.3}, {t:'cup',x:-1.15,y:.80,z:-2.48},
+      {t:'paper',x:.68,y:.80,z:-2.5,r:.9}, {t:'stain',x:1.5,y:.80,z:-2.5,s:.12}, {t:'cup',x:1.62,y:.80,z:-2.82},
+      {t:'paper',x:-1.85,y:.80,z:.55,r:1.3}, {t:'cup',x:-1.6,y:.80,z:-.42},
+      {t:'paper',x:1.3,y:.80,z:-.05,r:.2}, {t:'stain',x:1.2,y:.80,z:.85,s:.11},
+      {t:'cup',x:.25,y:.53,z:2.6}, {t:'paper',x:.9,y:.53,z:2.66,r:-.6} ],
+    [ {t:'smudge',x:3.07,y:1.0,z:-1.4,f:'-x'}, {t:'smudge',x:3.07,y:.85,z:-1.62,f:'-x'},
+      {t:'smudge',x:3.07,y:1.0,z:1.7,f:'-x'}, {t:'smudge',x:-3.05,y:1.0,z:-1.0,f:'x'},
+      {t:'smudge',x:-1.2,y:1.15,z:-4.12,f:'z'}, {t:'smudge',x:1.6,y:1.0,z:-4.12,f:'z'} ],
+    [ {t:'bin',x:-2.55,z:-1.95,keep:true}, {t:'trash',x:-2.55,z:-1.95,n:7},
+      {t:'bin',x:2.35,z:1.0,keep:true}, {t:'trash',x:2.35,z:1.0,n:6} ],
+    [ {t:'crumbs',x:-.3,z:-1.3,spread:1.5,n:26}, {t:'crumbs',x:.6,z:1.9,spread:1.2,n:18},
+      {t:'crumbs',x:-2.2,z:3.4,spread:.8,n:12}, {t:'stain',x:-.9,y:.005,z:1.2,s:.24} ]
+  ],
+  [ // Breakroom
+    [ {t:'stain',x:.3,y:.785,z:.25,s:.16}, {t:'crumbs',x:.0,z:.55,spread:.35,n:10,y:.78}, {t:'cup',x:-.3,y:.78,z:.6},
+      {t:'cup',x:.5,y:.78,z:.15}, {t:'stain',x:-.75,y:.83,z:-1.45,s:.14}, {t:'crumbs',x:-.2,z:-1.4,spread:.4,n:9,y:.83} ],
+    [ {t:'dishes',x:.2,y:.83,z:-1.42}, {t:'cup',x:.95,y:.83,z:-1.38}, {t:'stain',x:.55,y:.86,z:-1.48,s:.1} ],
+    [ {t:'bin',x:-2.45,z:-.55,keep:true}, {t:'trash',x:-2.45,z:-.55,n:7} ],
+    [ {t:'stain',x:-.9,y:.005,z:1.1,s:.3}, {t:'crumbs',x:.3,z:.5,spread:1.3,n:22}, {t:'stain',x:1.9,y:.005,z:.3,s:.2} ]
+  ],
+  [ // Restroom
+    [ {t:'stain',x:.93,y:.475,z:-1.15,s:.08}, {t:'stain',x:2.28,y:.475,z:-1.15,s:.08},
+      {t:'stain',x:-2.23,y:1.03,z:-1.45,s:.07}, {t:'stain',x:-1.22,y:1.03,z:-1.45,s:.07},
+      {t:'stain',x:-1.75,y:.96,z:-1.3,s:.1} ],
+    [ {t:'smudge',x:-2.2,y:1.35,z:-1.85,f:'z'}, {t:'smudge',x:-1.4,y:1.22,z:-1.85,f:'z'},
+      {t:'smudge',x:-1.0,y:1.42,z:-1.85,f:'z'}, {t:'smudge',x:1.42,y:.85,z:.29,f:'z'}, {t:'smudge',x:2.92,y:.85,z:.29,f:'z'} ],
+    [ {t:'roll',x:.62,y:.06,z:-1.3,appear:true}, {t:'roll',x:1.97,y:.06,z:-1.3,appear:true},
+      {t:'soap',x:-2.6,y:.96,z:-1.62,appear:true}, {t:'soap',x:-.85,y:.96,z:-1.62,appear:true} ],
+    [ {t:'paper',x:1.2,y:.01,z:-.3,r:.5}, {t:'paper',x:-.5,y:.01,z:.6,r:1.2}, {t:'stain',x:-1.4,y:.005,z:-.6,s:.26},
+      {t:'crumbs',x:-.4,z:1.1,spread:1.3,n:18}, {t:'stain',x:.6,y:.005,z:1.4,s:.18} ]
+  ]
+];
+
+const roomMess = {
+  home: facilityMess,
+  commercial: [
+    facilityMess[0],
+    [ facilityMess[1][0], facilityMess[1][1],
+      [ {t:'smudge',x:2.28,y:1.15,z:-1.11,f:'z'}, {t:'smudge',x:2.45,y:.6,z:-1.11,f:'z'}, {t:'smudge',x:-1.42,y:1.0,z:-1.27,f:'z'} ],
+      [ ...facilityMess[1][2], ...facilityMess[1][3] ] ],
+    facilityMess[2]
+  ],
+  residential: [
+    [ // Living room
+      [ {t:'dust',x:-.27,y:.595,z:.45,s:.5}, {t:'dust',x:-.81,y:.61,z:3.5,s:.6}, {t:'dust',x:-2.24,y:.485,z:.9,s:.35}, {t:'cup',x:-.45,y:.59,z:.25} ],
+      [ {t:'smudge',x:-1.2,y:.95,z:3.665,f:'-z'}, {t:'smudge',x:-.45,y:.8,z:3.665,f:'-z'}, {t:'stain',x:-.05,y:.595,z:.6,s:.1}, {t:'smudge',x:3.04,y:.95,z:1.9,f:'-x'} ],
+      [ {t:'crumbs',x:-.6,z:.4,spread:1.6,n:26,y:.055}, {t:'paper',x:.6,y:.055,z:1.6,r:.7} ],
+      [ {t:'crumbs',x:1.9,z:-2.6,spread:.9,n:14}, {t:'stain',x:2.1,y:.005,z:2.0,s:.24}, {t:'crumbs',x:-2.5,z:3.0,spread:.6,n:10}, {t:'stain',x:1.7,y:.005,z:-.6,s:.16} ]
+    ],
+    [ // Kitchen
+      [ {t:'crumbs',x:-.6,z:.45,spread:.8,n:16,y:.92}, {t:'stain',x:.4,y:.92,z:.3,s:.15}, {t:'stain',x:-.4,y:.835,z:-1.42,s:.13}, {t:'smudge',x:2.4,y:1.1,z:-1.09,f:'z'} ],
+      [ {t:'dishes',x:-1.7,y:.835,z:-1.42}, {t:'cup',x:-.8,y:.835,z:-1.4}, {t:'stain',x:-1.24,y:.87,z:-1.53,s:.1} ],
+      [ {t:'stain',x:1.42,y:.852,z:-1.37,s:.07}, {t:'stain',x:1.66,y:.852,z:-1.58,s:.08}, {t:'stain',x:1.55,y:.852,z:-1.48,s:.06} ],
+      [ {t:'crumbs',x:-.3,z:1.2,spread:1.4,n:22}, {t:'stain',x:1.3,y:.005,z:-.6,s:.22}, {t:'stain',x:-2.2,y:.005,z:.9,s:.18} ]
+    ],
+    [ // Bedroom
+      [ {t:'dust',x:-2.04,y:.59,z:-1.0,s:.28}, {t:'dust',x:1.42,y:.59,z:-1.0,s:.28}, {t:'dust',x:2.28,y:.875,z:1.37,s:.5} ],
+      [ {t:'smudge',x:-.8,y:.95,z:-1.48,f:'z'}, {t:'smudge',x:.3,y:1.0,z:-1.48,f:'z'}, {t:'smudge',x:3.03,y:.9,z:.5,f:'-x'} ],
+      [ {t:'bin',x:1.35,z:1.55,keep:true}, {t:'trash',x:1.35,z:1.55,n:6} ],
+      [ {t:'crumbs',x:-.3,z:1.4,spread:1.5,n:22}, {t:'crumbs',x:2.2,z:-.5,spread:.6,n:10}, {t:'paper',x:-2.1,y:.01,z:.4,r:.8} ]
+    ]
+  ]
+};

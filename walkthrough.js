@@ -17,6 +17,7 @@ const actionLabel = demoAction.querySelector('span');
 const resetCamera = document.querySelector('.reset-camera');
 const viewHint = document.querySelector('#view-hint');
 let selection = -1;
+let autoTimer = 0;
 let renderedRoom = -1;
 const roomChecks = rooms.map(() => new Set());
 let model;
@@ -74,12 +75,73 @@ function updateControls() {
   else if (complete.has(selection)) actionLabel.textContent = 'Next room';
   else actionLabel.textContent = 'Show finished room';
 
-  model.update(selection, complete);
+  demoAction.classList.toggle('invite', selection < 0 && count === 0);
+  demoAction.disabled = autoTimer !== 0;
+  if (autoTimer) actionLabel.textContent = 'Cleaning…';
+  model.update(selection, complete, roomChecks);
+}
+
+function stopAutoClean() {
+  clearTimeout(autoTimer);
+  autoTimer = 0;
 }
 
 function selectRoom(index) {
+  stopAutoClean();
+  hideFinale();
   selection = index;
   updateControls();
+}
+
+const finale = document.createElement('div');
+finale.className = 'finale';
+finale.hidden = true;
+finale.setAttribute('role', 'status');
+finale.innerHTML = '<p class="finale-kicker"><i aria-hidden="true">✓</i> ALL ROOMS COMPLETE</p>' +
+  '<h2>Spotless, room by room.</h2>' +
+  '<p>Want your ' + (isResidential ? 'home' : 'space') + ' cleaned like this?</p>' +
+  '<div class="finale-actions"><a class="finale-cta" href="/request/">Request a walkthrough <i class="arrow" aria-hidden="true"></i></a>' +
+  '<button type="button" class="finale-replay">Replay</button></div>';
+document.querySelector('#viewer').append(finale);
+let finaleTimer = 0;
+
+function hideFinale() {
+  clearTimeout(finaleTimer);
+  finale.classList.remove('show');
+  finale.hidden = true;
+}
+
+function roomFinished(index) {
+  model.finish(index);
+  if (!rooms.every((_, room) => isComplete(room))) return;
+  stopAutoClean();
+  finaleTimer = setTimeout(() => {
+    selection = -1;
+    updateControls();
+    model.celebrate();
+    finale.hidden = false;
+    requestAnimationFrame(() => finale.classList.add('show'));
+  }, 900);
+}
+
+function replay() {
+  hideFinale();
+  roomChecks.forEach(checks => checks.clear());
+  selectRoom(-1);
+  model.reset();
+}
+
+function autoClean(index) {
+  const remaining = rooms[index].tasks.map((_, task) => task).filter(task => !roomChecks[index].has(task));
+  const next = () => {
+    const task = remaining.shift();
+    roomChecks[index].add(task);
+    autoTimer = remaining.length ? setTimeout(next, 520) : 0;
+    if (isComplete(index)) roomFinished(index);
+    updateControls();
+  };
+  autoTimer = -1;
+  next();
 }
 
 function fallbackModel() {
@@ -106,6 +168,7 @@ function fallbackModel() {
       });
     },
     finish() {},
+    celebrate() {},
     changeView() {},
     reset() {}
   };
@@ -360,6 +423,126 @@ function buildModel() {
     block(g,-2.69,.021,1.42,1.01,.034,.5,theme.navy,false);
   }
 
+  const messMat = {
+    paper:mat(0xf3f1e8,{roughness:.9}), cup:mat(0xf7f3ea,{roughness:.5}), coffee:mat(0x6b4a2b),
+    stain:new T.MeshStandardMaterial({color:0x6b5434,transparent:true,opacity:.6,roughness:1,depthWrite:false}),
+    crumb:mat(0x5b4a36), trash:mat(0xe1ddd2,{roughness:1}), trash2:mat(0xa3b3c4,{roughness:1}),
+    smudge:new T.MeshStandardMaterial({color:0x5a5040,transparent:true,opacity:.45,roughness:1,depthWrite:false}),
+    dust:new T.MeshStandardMaterial({color:0x99958a,transparent:true,opacity:.7,roughness:1,depthWrite:false}),
+    bin:mat(0x4f6b8c,{metalness:.25,roughness:.5}), soap:mat(0x5fc3d8,{roughness:.35})
+  };
+  const disc = new T.CylinderGeometry(1,1,1,20);
+  let messSeed = 543;
+  const rand = () => { messSeed = (Math.imul(messSeed,1664525) + 1013904223) >>> 0; return messSeed / 4294967296; };
+  function flat(parent, material, sx, sz, y = .004) {
+    const mesh = new T.Mesh(disc, material);
+    mesh.scale.set(sx, .004, sz);
+    mesh.position.y = y;
+    mesh.receiveShadow = true;
+    parent.add(mesh);
+    return mesh;
+  }
+  function messItem(parent, item) {
+    const g = group(parent, item.x, item.y ?? 0, item.z);
+    switch (item.t) {
+      case 'paper':
+        g.rotation.y = item.r || 0;
+        block(g,0,.006,0,.3,.012,.22,messMat.paper,false);
+        block(g,.035,.015,.025,.27,.006,.2,messMat.paper,false).rotation.y = .3;
+        break;
+      case 'cup':
+        cylinder(g,0,.07,0,.05,.04,.14,messMat.cup);
+        cylinder(g,0,.141,0,.043,.043,.004,messMat.coffee);
+        break;
+      case 'stain': flat(g, messMat.stain, item.s, item.s * .78); break;
+      case 'dust': flat(g, messMat.dust, item.s, item.s * .7); break;
+      case 'crumbs':
+        for (let i = 0; i < item.n; i++) {
+          const a = rand() * 6.283, r = Math.sqrt(rand()) * item.spread;
+          block(g,Math.cos(a)*r,.012,Math.sin(a)*r*.8,.03+rand()*.045,.02,.03+rand()*.045,messMat.crumb,false).rotation.y = rand()*3;
+        }
+        break;
+      case 'trash':
+        for (let i = 0; i < item.n; i++) {
+          const a = rand() * 6.283, inside = i < 3, r = inside ? rand() * .1 : .24 + rand() * .22;
+          rounded(g,Math.cos(a)*r,inside ? .47 + i * .06 : .06,Math.sin(a)*r,.07+rand()*.04,.06+rand()*.03,.07+rand()*.04,i % 3 ? messMat.trash : messMat.trash2);
+        }
+        break;
+      case 'bin':
+        cylinder(g,0,.22,0,.19,.15,.44,messMat.bin);
+        cylinder(g,0,.443,0,.165,.165,.008,theme.black);
+        break;
+      case 'smudge':
+        for (let i = 0; i < 3; i++) {
+          const s = flat(g, messMat.smudge, .06 + rand() * .05, .08 + rand() * .05, (rand() - .5) * .22);
+          const offset = (rand() - .5) * .26;
+          if (item.f.endsWith('x')) { s.rotation.z = Math.PI / 2; s.position.z = offset; }
+          else { s.rotation.x = Math.PI / 2; s.position.x = offset; }
+        }
+        break;
+      case 'dishes':
+        for (let i = 0; i < 4; i++) cylinder(g,(i % 2) * .02,.015 + i * .03,0,.15,.11,.025,theme.white);
+        cylinder(g,.27,.06,.06,.05,.04,.12,messMat.cup);
+        break;
+      case 'roll':
+        cylinder(g,0,.06,0,.065,.065,.12,theme.white);
+        cylinder(g,.15,.06,.05,.065,.065,.12,theme.white);
+        break;
+      case 'soap':
+        cylinder(g,0,.09,0,.045,.05,.18,messMat.soap);
+        cylinder(g,0,.2,0,.012,.012,.05,theme.white);
+        break;
+    }
+    return g;
+  }
+  function ownMaterials(g, skip) {
+    const copies = new Map();
+    g.traverse(object => {
+      if (!object.isMesh || !object.material.isMeshStandardMaterial || object.material === skip) return;
+      if (!copies.has(object.material)) {
+        const copy = object.material.clone();
+        copy.userData.base = copy.color.clone();
+        copies.set(object.material, copy);
+      }
+      object.material = copies.get(object.material);
+    });
+    return [...copies.values()];
+  }
+
+  const sparkTexture = (() => {
+    const surface = document.createElement('canvas');
+    surface.width = surface.height = 64;
+    const ctx = surface.getContext('2d');
+    const glow = ctx.createRadialGradient(32,32,0,32,32,32);
+    glow.addColorStop(0,'rgba(255,255,255,1)');
+    glow.addColorStop(.3,'rgba(200,244,255,.9)');
+    glow.addColorStop(1,'rgba(120,210,255,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    for (let i = 0; i < 8; i++) {
+      const a = i * Math.PI / 4, r = i % 2 ? 6 : 32;
+      ctx.lineTo(32 + Math.cos(a) * r, 32 + Math.sin(a) * r);
+    }
+    ctx.closePath();
+    ctx.fill();
+    const texture = new T.CanvasTexture(surface);
+    texture.colorSpace = T.SRGBColorSpace;
+    return texture;
+  })();
+  const sparkles = [];
+  function sparkle(position, count = 4, spread = .22, delay = 0) {
+    if (reducedMotion.matches) return;
+    const now = performance.now();
+    for (let i = 0; i < count; i++) {
+      const sprite = new T.Sprite(new T.SpriteMaterial({map:sparkTexture,transparent:true,depthWrite:false,blending:T.AdditiveBlending}));
+      sprite.position.set(position.x + (Math.random() - .5) * spread * 2, position.y + .1 + Math.random() * .25, position.z + (Math.random() - .5) * spread * 2);
+      sprite.scale.setScalar(.001);
+      sprite.userData = {born:now + delay + i * 75, life:650 + Math.random() * 450, size:.32 + Math.random() * .22, rise:.3 + Math.random() * .35, y:sprite.position.y};
+      scene.add(sprite);
+      sparkles.push(sprite);
+    }
+  }
+
   const buildFurniture = isResidential
     ? residentialFurniture({ block, cylinder, partition, glazing, chair, plant, basin, rounded, theme })
     : [office, breakroom, restroom];
@@ -390,7 +573,16 @@ function buildModel() {
     sweepSurface.userData.foundation=true;
     g.add(sweepSurface);
     buildFurniture[index](g);
-    return {g,top,initial,cleaned,outline,sweepMaterial,finish:-1,amount:0,target:0,selected:false};
+    const mess = [];
+    (roomMess[sceneName][index] || []).forEach((items, task) => {
+      items.forEach((item, order) => {
+        const object = messItem(g, item);
+        mess.push({object, task, order, keep:!!item.keep, appear:!!item.appear, amount:0, target:0, startAt:0, sparked:true});
+        if (item.appear) object.visible = false;
+      });
+    });
+    const materials = ownMaterials(g, top);
+    return {g,top,initial,cleaned,outline,sweepMaterial,mess,materials,finish:-1,amount:0,target:0,dim:0,selected:false,complete:false};
   });
 
   const originTheta = isResidential ? -.35 : .43;
@@ -401,6 +593,16 @@ function buildModel() {
   let width=1, height=1, frame=0, last=0, active=-1, drag;
   const point=new T.Vector3();
   const look=new T.Vector3(0,.14,0);
+  const lookTarget=new T.Vector3(0,.14,0);
+  const dimColor=new T.Color(0x0a1938);
+  const worldPoint=new T.Vector3();
+  let targetZoom=1;
+  let idle=!reducedMotion.matches, onScreen=true;
+  const idleUntil=performance.now()+25000;
+  new IntersectionObserver(entries => {
+    onScreen = entries[0].isIntersecting;
+    if (onScreen) schedule();
+  }).observe(sceneElement);
   const clamp=T.MathUtils.clamp;
   function moveCamera() {
     const distance=27;
@@ -419,6 +621,7 @@ function buildModel() {
       hotspots[index].style.left=x+'px';
       hotspots[index].style.top=y+'px';
       hotspots[index].style.zIndex=String((index===active?50:0)+Math.round(y));
+      hotspots[index].classList.toggle('muted',active>=0 && index!==active);
       hotspots[index].hidden=false;
     });
   }
@@ -427,27 +630,73 @@ function buildModel() {
     const dt=last ? Math.min(time-last,36):16;
     last=time;
     const blend=reducedMotion.matches?1:1-Math.pow(.81,dt/16);
+    if (idle && time > idleUntil) { idle = false; lastOrbit = targetTheta; }
+    if (idle && onScreen && active < 0 && currentView==='orbit') targetTheta = lastOrbit + Math.sin(time / 2400) * .13;
     theta+=(targetTheta-theta)*blend;
     elevation+=(targetElevation-elevation)*blend;
     let moving=Math.abs(targetTheta-theta)+Math.abs(targetElevation-elevation)>.0009;
+    const glide=reducedMotion.matches?1:1-Math.pow(.88,dt/16);
+    look.lerp(lookTarget,glide);
+    camera.zoom+=(targetZoom-camera.zoom)*glide;
+    camera.updateProjectionMatrix();
+    moving ||= look.distanceTo(lookTarget)+Math.abs(targetZoom-camera.zoom)>.001;
     for(const m of models) {
       const y=m.selected && currentView==='orbit'?.33:0;
       m.g.position.y+=(y-m.g.position.y)*blend;
       m.amount+=(m.target-m.amount)*blend*.53;
       if (reducedMotion.matches) m.amount=m.target;
-      m.top.color.copy(m.initial).lerp(m.cleaned,m.amount);
+      const dimTarget=active>=0 && !m.selected?1:0;
+      m.dim+=(dimTarget-m.dim)*(reducedMotion.matches?1:blend*.7);
+      const shade=m.dim*.62;
+      m.top.color.copy(m.initial).lerp(m.cleaned,m.amount).lerp(dimColor,shade);
       m.top.roughness=.83-m.amount*.41;
-      m.outline.material.opacity=m.selected?.91:m.target?.37:0;
+      for (const material of m.materials) material.color.copy(material.userData.base).lerp(dimColor,shade);
+      m.outline.material.color.setHex(m.complete?0x8ff0dc:0x8ce5ff);
+      m.outline.material.opacity=m.selected?.91:m.complete?.6*(1-m.dim*.5):0;
+      moving ||= Math.abs(dimTarget-m.dim)>.002;
+      for (const item of m.mess) {
+        if (item.keep) continue;
+        if (time >= item.startAt) {
+          if (!item.sparked) {
+            item.sparked = true;
+            item.object.getWorldPosition(worldPoint);
+            sparkle(worldPoint, item.appear ? 3 : 4);
+          }
+          const step = reducedMotion.matches ? 1 : dt / 430;
+          item.amount = item.target > item.amount ? Math.min(item.target, item.amount + step) : Math.max(item.target, item.amount - step);
+        }
+        const ease = item.amount * item.amount * (3 - 2 * item.amount);
+        const visibleAmount = item.appear ? ease : 1 - ease;
+        item.object.visible = visibleAmount > .01;
+        item.object.scale.setScalar(Math.max(visibleAmount, .001));
+        if (!item.appear) item.object.position.y = (item.object.userData.baseY ??= item.object.position.y) + ease * .22;
+        moving ||= item.amount !== item.target;
+      }
       const pulse=(time-m.finish)/870;
       const scan=m.finish>=0 && pulse<1 && !reducedMotion.matches;
       m.sweepMaterial.uniforms.alpha.value=scan?Math.sin(Math.PI*pulse):0;
       m.sweepMaterial.uniforms.position.value=pulse*1.42-.21;
       moving ||= scan || Math.abs(y-m.g.position.y)+Math.abs(m.target-m.amount)>.001;
     }
+    for (let i = sparkles.length - 1; i >= 0; i--) {
+      const sprite = sparkles[i], data = sprite.userData, k = (time - data.born) / data.life;
+      moving = true;
+      if (k < 0) continue;
+      if (k >= 1) {
+        scene.remove(sprite);
+        sprite.material.dispose();
+        sparkles.splice(i, 1);
+        continue;
+      }
+      sprite.scale.setScalar(Math.max(data.size * Math.sin(Math.PI * k), .001));
+      sprite.position.y = data.y + data.rise * k;
+      sprite.material.rotation = k * 1.6;
+      sprite.material.opacity = 1 - k * k;
+    }
     moveCamera();
     renderer.render(scene,camera);
     placeMarkers();
-    if(moving) schedule();
+    if(moving || (idle && onScreen && active < 0 && currentView==='orbit')) schedule();
     else last=0;
   }
   function schedule() {
@@ -472,6 +721,7 @@ function buildModel() {
 
   function pointerDown(event) {
     if(currentView==='plan' || !event.isPrimary || event.button!==0) return;
+    if (idle) { idle=false; lastOrbit=targetTheta; }
     drag={id:event.pointerId,x:event.clientX,theta:targetTheta};
   }
   function pointerMove(event) {
@@ -508,12 +758,48 @@ function buildModel() {
     schedule();
   }
   return {
-    update(selection,finished) {
+    update(selection,finished,checks) {
+      if (selection>=0 && idle) { idle=false; lastOrbit=targetTheta=originTheta; }
       active=selection;
+      const phone=width<490;
+      if (active>=0) {
+        const room=rooms[active];
+        lookTarget.set(room.x,.3,room.z);
+        targetZoom=(room.d>6?1.24:1.45)*(phone?.94:1);
+      } else {
+        lookTarget.set(0,.14,0);
+        targetZoom=1;
+      }
+      const now=performance.now();
       models.forEach((m,i) => {
         m.selected=i===active;
-        m.target=finished.has(i)?1:0;
+        m.complete=finished.has(i);
+        m.target=checks[i].size/rooms[i].tasks.length;
+        let stagger=0;
+        for (const item of m.mess) {
+          const target=checks[i].has(item.task)?1:0;
+          if (item.keep || target===item.target) continue;
+          item.target=target;
+          item.startAt=now+stagger;
+          item.sparked=target===0;
+          stagger+=85;
+        }
       });
+      schedule();
+    },
+    celebrate() {
+      if (reducedMotion.matches) return;
+      models.forEach((m,i) => {
+        const room=rooms[i];
+        for (let k=0;k<6;k++) {
+          worldPoint.set(room.x+(Math.random()-.5)*room.w*.8,.4+Math.random()*.6,room.z+(Math.random()-.5)*room.d*.8);
+          sparkle(worldPoint,3,.3,k*140+i*90);
+        }
+      });
+      targetTheta+=.28;
+      lastOrbit=targetTheta;
+      targetZoom=width<490?.86:.9;
+      lookTarget.set(0,width<490?-3.4:-2.6,0);
       schedule();
     },
     finish(index) {
@@ -523,6 +809,7 @@ function buildModel() {
     changeView,
     reset() {
       lastOrbit=originTheta;
+      targetTheta=originTheta;
       changeView('orbit');
     }
   };
@@ -542,20 +829,20 @@ resetCamera.addEventListener('click', () => model.reset());
 jobTasks.addEventListener('change', event => {
   const input = event.target;
   if (!input.matches('input[data-task]')) return;
+  hideFinale();
   if (selection < 0) selection = 0;
   const checks = roomChecks[selection];
   const task = Number(input.dataset.task);
   if (input.checked) checks.add(task);
   else checks.delete(task);
-  if (isComplete(selection)) model.finish(selection);
+  if (isComplete(selection)) roomFinished(selection);
   updateControls();
 });
+finale.querySelector('.finale-replay').addEventListener('click', replay);
 
 demoAction.addEventListener('click', () => {
   if (rooms.every((_, index) => isComplete(index))) {
-    roomChecks.forEach(checks => checks.clear());
-    selectRoom(-1);
-    model.reset();
+    replay();
     return;
   }
   if (selection < 0) {
@@ -563,9 +850,7 @@ demoAction.addEventListener('click', () => {
     return;
   }
   if (!isComplete(selection)) {
-    rooms[selection].tasks.forEach((_, index) => roomChecks[selection].add(index));
-    model.finish(selection);
-    updateControls();
+    autoClean(selection);
     return;
   }
   const next = rooms.findIndex((_, index) => index > selection && !isComplete(index));

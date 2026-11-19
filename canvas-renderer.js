@@ -129,7 +129,7 @@ function createCanvasRenderer(T,canvas) {
     const bottom=[];
     const furnishings=[];
     const outlines=[];
-    scene.traverse(object=>{
+    scene.traverseVisible(object=>{
       if(object.isLineSegments && object.userData.outline && object.material.opacity>0) outlines.push(object);
       if(!object.isMesh || object.material.isShadowMaterial) return;
       matrix.multiplyMatrices(viewProjection,object.matrixWorld);
