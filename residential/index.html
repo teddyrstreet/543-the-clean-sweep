@@ -14,6 +14,10 @@
 <meta property="og:url" content="https://543thecleansweep.com/residential/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="apple-touch-icon" href="/assets/logo.png">
+<script defer src="/assets/three.min.js"></script>
+<script defer src="/canvas-renderer.js"></script>
+<script defer src="/room-scenes.js"></script>
+<script defer src="/walkthrough.js"></script>
 </head>
 <body class="interior residential"><a class="skip" href="#main">Skip to content</a><header class="site-header shell brand-header">
   <a class="brand" href="/">
@@ -40,17 +44,49 @@
   </div>
 </header>
 <main id="main">
-<section class="shell split-hero home-hero">
-<div class="inner-copy">
+<section class="shell experience experience--service" data-scene="residential">
+<div class="intro inner-copy">
 <p class="eyebrow origin"><span aria-hidden="true"></span> FOR HOMES IN BETHEL</p>
 <h1>HOME<br><em>CLEANING.</em></h1>
 <p class="intro-text">Regular housekeeping, detailed deep cleaning, and a clean start when you move in or out.</p>
 <div class="inline-actions"><a class="demo-action" href="/request/?service=residential">Ask about a home cleaning<i class="arrow" aria-hidden="true"></i></a></div>
 </div>
-<figure class="model-panel home-plan">
-<figcaption class="panel-head"><span class="eyebrow">EXAMPLE HOME</span></figcaption>
-<img src="/assets/residential-model.webp" alt="3D illustration of a furnished living room, kitchen, and bedroom" width="900" height="555">
-</figure>
+    <div class="viewer" id="viewer" aria-label="Interactive model of an example living room, kitchen, and bedroom">
+      <div class="viewer-head">
+        <span class="eyebrow"><i class="status-light" aria-hidden="true"></i> EXAMPLE HOME</span>
+        <div class="view-controls" aria-label="Model views">
+          <button type="button" data-view="orbit" aria-pressed="true">3D</button>
+          <button type="button" data-view="plan" aria-pressed="false">Plan</button>
+        </div>
+      </div>
+      <div class="scene" id="scene" aria-hidden="true"><canvas id="model"></canvas></div>
+      <div class="hotspots" id="hotspots">
+        <button class="hotspot" type="button" hidden data-room="0" aria-label="Explore living room"><span>01</span> Living room</button>
+        <button class="hotspot" type="button" hidden data-room="1" aria-label="Explore kitchen"><span>02</span> Kitchen</button>
+        <button class="hotspot" type="button" hidden data-room="2" aria-label="Explore bedroom"><span>03</span> Bedroom</button>
+      </div>
+      <div class="viewer-foot">
+        <span id="view-hint"><i class="orbit-icon" aria-hidden="true">⤾</i> Drag to rotate</span>
+        <button class="reset-camera" type="button" aria-label="Reset the model to its original view">Reset view</button>
+      </div>
+    </div>
+    <aside class="console" aria-label="Cleaning walkthrough controls">
+      <div class="console-top"><span class="eyebrow">WALKTHROUGH</span><span class="progress" id="progress" aria-live="polite">0 / 3 COMPLETE</span></div>
+      <ol class="room-list">
+        <li><button type="button" data-step="0"><span class="room-index">01</span> Living room <span class="room-state" aria-hidden="true"></span></button></li>
+        <li><button type="button" data-step="1"><span class="room-index">02</span> Kitchen <span class="room-state" aria-hidden="true"></span></button></li>
+        <li><button type="button" data-step="2"><span class="room-index">03</span> Bedroom <span class="room-state" aria-hidden="true"></span></button></li>
+      </ol>
+      <div class="job-detail">
+        <div class="checklist-heading">
+          <h2 id="job-heading">Living room checklist</h2>
+          <p id="job-count" class="task-count" aria-live="polite"></p>
+        </div>
+        <ul class="task-list" id="job-tasks" aria-labelledby="job-heading"></ul>
+      </div>
+      <button class="demo-action" id="demo-action" type="button"><span>Start walkthrough</span><i class="arrow" aria-hidden="true"></i></button>
+      <noscript><p>This walkthrough requires JavaScript.</p></noscript>
+    </aside>
 </section>
 <section class="shell service-list" aria-label="Residential cleaning options">
 <article><h2>Routine housekeeping</h2><p>Regular visits for kitchens, bathrooms, floors, and everyday surfaces.</p></article>
