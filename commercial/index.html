@@ -14,6 +14,10 @@
 <meta property="og:url" content="https://543thecleansweep.com/commercial/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="apple-touch-icon" href="/assets/logo.png">
+<script defer src="/assets/three.min.js"></script>
+<script defer src="/canvas-renderer.js"></script>
+<script defer src="/room-scenes.js"></script>
+<script defer src="/walkthrough.js"></script>
 </head>
 <body class="interior commercial"><a class="skip" href="#main">Skip to content</a><header class="site-header shell brand-header">
   <a class="brand" href="/">
@@ -40,18 +44,49 @@
   </div>
 </header>
 <main id="main">
-<section class="shell split-hero facility-hero">
-<div class="inner-copy">
+<section class="shell experience experience--service" data-scene="commercial">
+<div class="intro inner-copy">
 <p class="eyebrow origin"><span aria-hidden="true"></span> FOR OFFICES &amp; FACILITIES</p>
 <h1>COMMERCIAL<br><em>JANITORIAL.</em></h1>
 <p class="intro-text">Recurring cleaning for offices, facilities, and community spaces in Bethel. We walk the site with you and put the scope in writing.</p>
 <div class="inline-actions"><a class="demo-action" href="/request/">Request a walkthrough<i class="arrow" aria-hidden="true"></i></a><a class="inline-link" href="#scope">See what we clean <i class="arrow" aria-hidden="true"></i></a></div>
 </div>
-<figure class="model-panel work-plan">
-<figcaption class="panel-head"><span class="eyebrow">SAMPLE FACILITY</span><span class="eyebrow panel-mode">CLEANING SCOPE</span></figcaption>
-<img src="/assets/commercial-model.webp" alt="Sample 3D office, breakroom, and restroom shown from above" width="900" height="555">
-<div class="zone-tags"><span>Office</span><span>Breakroom</span><span>Restroom</span></div>
-</figure>
+    <div class="viewer" id="viewer" aria-label="Interactive model of an example office, breakroom, and restroom">
+      <div class="viewer-head">
+        <span class="eyebrow"><i class="status-light" aria-hidden="true"></i> SAMPLE FACILITY</span>
+        <div class="view-controls" aria-label="Model views">
+          <button type="button" data-view="orbit" aria-pressed="true">3D</button>
+          <button type="button" data-view="plan" aria-pressed="false">Plan</button>
+        </div>
+      </div>
+      <div class="scene" id="scene" aria-hidden="true"><canvas id="model"></canvas></div>
+      <div class="hotspots" id="hotspots">
+        <button class="hotspot" type="button" hidden data-room="0" aria-label="Explore office"><span>01</span> Office</button>
+        <button class="hotspot" type="button" hidden data-room="1" aria-label="Explore breakroom"><span>02</span> Breakroom</button>
+        <button class="hotspot" type="button" hidden data-room="2" aria-label="Explore restroom"><span>03</span> Restroom</button>
+      </div>
+      <div class="viewer-foot">
+        <span id="view-hint"><i class="orbit-icon" aria-hidden="true">⤾</i> Drag to rotate</span>
+        <button class="reset-camera" type="button" aria-label="Reset the model to its original view">Reset view</button>
+      </div>
+    </div>
+    <aside class="console" aria-label="Cleaning walkthrough controls">
+      <div class="console-top"><span class="eyebrow">WALKTHROUGH</span><span class="progress" id="progress" aria-live="polite">0 / 3 COMPLETE</span></div>
+      <ol class="room-list">
+        <li><button type="button" data-step="0"><span class="room-index">01</span> Office <span class="room-state" aria-hidden="true"></span></button></li>
+        <li><button type="button" data-step="1"><span class="room-index">02</span> Breakroom <span class="room-state" aria-hidden="true"></span></button></li>
+        <li><button type="button" data-step="2"><span class="room-index">03</span> Restroom <span class="room-state" aria-hidden="true"></span></button></li>
+      </ol>
+      <div class="job-detail">
+        <div class="checklist-heading">
+          <h2 id="job-heading">Office checklist</h2>
+          <p id="job-count" class="task-count" aria-live="polite"></p>
+        </div>
+        <ul class="task-list" id="job-tasks" aria-labelledby="job-heading"></ul>
+      </div>
+      <button class="demo-action" id="demo-action" type="button"><span>Start walkthrough</span><i class="arrow" aria-hidden="true"></i></button>
+      <noscript><p>This walkthrough requires JavaScript.</p></noscript>
+    </aside>
 </section>
 <section class="shell sequence" id="process" aria-label="How commercial service starts">
 <div><span>01</span><h2>Site walkthrough</h2><p>Show Chelsea the space and what needs attention.</p></div>

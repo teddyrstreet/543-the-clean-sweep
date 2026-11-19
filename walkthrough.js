@@ -1,33 +1,63 @@
 'use strict';
 
-const rooms = [
-  { name: 'Office', x: -3.37, z: 0, w: 6.43, d: 8.55, color: 0x7b9ebc, clean: 0xbce9fa, floor: 'carpet',
-    tasks: 'Wipe desks and touchpoints, empty wastebaskets, and vacuum the carpet.' },
-  { name: 'Breakroom', x: 3.37, z: -2.19, w: 6.43, d: 4.17, color: 0x7d9ab0, clean: 0xb5f1fa, floor: 'planks',
-    tasks: 'Wipe tables and counters, clean the sink, and mop the floor.' },
-  { name: 'Restroom', x: 3.37, z: 2.19, w: 6.43, d: 4.17, color: 0x889fc2, clean: 0xc2e7ff, floor: 'tile',
-    tasks: 'Disinfect fixtures and touchpoints, restock supplies, and mop the floor.' }
-];
+const sceneName = document.querySelector('.experience').dataset.scene || 'home';
+const isResidential = sceneName === 'residential';
+const rooms = facilityLayout.map((layout, index) => ({ ...layout, ...roomDetails[sceneName][index] }));
 
-const viewer = document.querySelector('#viewer');
 const sceneElement = document.querySelector('#scene');
 const hotspots = [...document.querySelectorAll('[data-room]')];
 const stepButtons = [...document.querySelectorAll('[data-step]')];
 const viewButtons = [...document.querySelectorAll('[data-view]')];
 const progress = document.querySelector('#progress');
 const jobHeading = document.querySelector('#job-heading');
-const jobCopy = document.querySelector('#job-copy');
+const jobTasks = document.querySelector('#job-tasks');
+const jobCount = document.querySelector('#job-count');
 const demoAction = document.querySelector('#demo-action');
 const actionLabel = demoAction.querySelector('span');
 const resetCamera = document.querySelector('.reset-camera');
 const viewHint = document.querySelector('#view-hint');
 let selection = -1;
-const complete = new Set();
+let renderedRoom = -1;
+const roomChecks = rooms.map(() => new Set());
 let model;
 
+function isComplete(index) {
+  return roomChecks[index].size === rooms[index].tasks.length;
+}
+
+function renderChecklist(index) {
+  const room = rooms[index];
+  const checks = roomChecks[index];
+  if (renderedRoom !== index) {
+    jobHeading.textContent = room.name + ' checklist';
+    const items = room.tasks.map((task, taskIndex) => {
+      const item = document.createElement('li');
+      const label = document.createElement('label');
+      const input = document.createElement('input');
+      const text = document.createElement('span');
+
+      input.type = 'checkbox';
+      input.dataset.task = String(taskIndex);
+      text.textContent = task;
+      label.append(input, text);
+      item.append(label);
+      return item;
+    });
+    jobTasks.replaceChildren(...items);
+    renderedRoom = index;
+  }
+  jobTasks.querySelectorAll('input').forEach(input => {
+    input.checked = checks.has(Number(input.dataset.task));
+  });
+  const tally = checks.size + ' / ' + room.tasks.length + ' TASKS';
+  if (jobCount.textContent !== tally) jobCount.textContent = tally;
+}
+
 function updateControls() {
+  const complete = new Set([...rooms.keys()].filter(isComplete));
   const count = complete.size;
-  progress.textContent = count + ' / ' + rooms.length + ' COMPLETE';
+  const tally = count + ' / ' + rooms.length + ' COMPLETE';
+  if (progress.textContent !== tally) progress.textContent = tally;
   [...hotspots, ...stepButtons].forEach(button => {
     const index = Number(button.dataset.room ?? button.dataset.step);
     const active = index === selection;
@@ -37,17 +67,13 @@ function updateControls() {
     button.setAttribute('aria-pressed', String(active));
     button.setAttribute('aria-label', rooms[index].name + (done ? ', completed' : ''));
   });
-  if (selection < 0) {
-    jobHeading.textContent = 'Recurring office cleaning';
-    jobCopy.textContent = 'Select a room to see what goes on its cleaning checklist.';
-    actionLabel.textContent = 'Start walkthrough';
-  } else {
-    const room = rooms[selection];
-    const finished = complete.has(selection);
-    jobHeading.textContent = room.name + (finished ? ' complete' : ' checklist');
-    jobCopy.textContent = count === rooms.length ? 'All three rooms are finished for this visit.' : room.tasks;
-    actionLabel.textContent = count === rooms.length ? 'Replay walkthrough' : finished ? 'Next room' : 'Show finished room';
-  }
+  renderChecklist(selection < 0 ? 0 : selection);
+
+  if (count === rooms.length) actionLabel.textContent = 'Replay walkthrough';
+  else if (selection < 0) actionLabel.textContent = 'Start walkthrough';
+  else if (complete.has(selection)) actionLabel.textContent = 'Next room';
+  else actionLabel.textContent = 'Show finished room';
+
   model.update(selection, complete);
 }
 
@@ -71,7 +97,7 @@ function fallbackModel() {
   hotspots.forEach(button => { button.hidden = true; });
   viewButtons[0].closest('.view-controls').hidden = true;
   resetCamera.hidden = true;
-  viewHint.textContent = 'Select a room below';
+  viewHint.textContent = 'Choose a room';
   return {
     update(active, finished) {
       cells.forEach((cell, index) => {
@@ -334,7 +360,9 @@ function buildModel() {
     block(g,-2.69,.021,1.42,1.01,.034,.5,theme.navy,false);
   }
 
-  const buildFurniture = [office,breakroom,restroom];
+  const buildFurniture = isResidential
+    ? residentialFurniture({ block, cylinder, partition, glazing, chair, plant, basin, rounded, theme })
+    : [office, breakroom, restroom];
   const models = rooms.map((room,index) => {
     const g=group(facility,room.x,0,room.z);
     const initial = new T.Color(room.color);
@@ -365,7 +393,7 @@ function buildModel() {
     return {g,top,initial,cleaned,outline,sweepMaterial,finish:-1,amount:0,target:0,selected:false};
   });
 
-  const originTheta=.43;
+  const originTheta = isResidential ? -.35 : .43;
   const originElevation=.66;
   let theta=originTheta, elevation=originElevation, targetTheta=theta, targetElevation=elevation;
   let lastOrbit=theta;
@@ -511,24 +539,36 @@ try {
 });
 viewButtons.forEach(button => button.addEventListener('click', () => model.changeView(button.dataset.view)));
 resetCamera.addEventListener('click', () => model.reset());
+jobTasks.addEventListener('change', event => {
+  const input = event.target;
+  if (!input.matches('input[data-task]')) return;
+  if (selection < 0) selection = 0;
+  const checks = roomChecks[selection];
+  const task = Number(input.dataset.task);
+  if (input.checked) checks.add(task);
+  else checks.delete(task);
+  if (isComplete(selection)) model.finish(selection);
+  updateControls();
+});
+
 demoAction.addEventListener('click', () => {
-  if(complete.size===rooms.length) {
-    complete.clear();
+  if (rooms.every((_, index) => isComplete(index))) {
+    roomChecks.forEach(checks => checks.clear());
     selectRoom(-1);
     model.reset();
     return;
   }
-  if(selection<0) {
+  if (selection < 0) {
     selectRoom(0);
     return;
   }
-  if(!complete.has(selection)) {
-    complete.add(selection);
+  if (!isComplete(selection)) {
+    rooms[selection].tasks.forEach((_, index) => roomChecks[selection].add(index));
     model.finish(selection);
     updateControls();
     return;
   }
-  const next=rooms.findIndex((_,index) => index>selection && !complete.has(index));
-  selectRoom(next>=0?next:rooms.findIndex((_,index) => !complete.has(index)));
+  const next = rooms.findIndex((_, index) => index > selection && !isComplete(index));
+  selectRoom(next >= 0 ? next : rooms.findIndex((_, index) => !isComplete(index)));
 });
 updateControls();

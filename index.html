@@ -8,9 +8,6 @@
 <meta name="description" content="Alaska Native-owned cleaning in Bethel, Alaska. Commercial, janitorial, facility and residential cleaning built on written scopes, dependable scheduling and local accountability. Request a walkthrough.">
 <link rel="icon" href="assets/543-logo.webp">
 <link rel="stylesheet" href="style.css">
-<script defer src="assets/three.min.js"></script>
-<script defer src="canvas-renderer.js"></script>
-<script defer src="walkthrough.js"></script>
 <link rel="stylesheet" href="/interiors.css">
 <link rel="canonical" href="https://543thecleansweep.com/">
 <meta property="og:type" content="website">
@@ -25,6 +22,10 @@
 {"@context":"https://schema.org","@type":"LocalBusiness","name":"543 The Clean Sweep","legalName":"543 The Clean Sweep LLC","founder":{"@type":"Person","name":"Chelsea Hoffman"},"telephone":"+1-907-545-8005","email":"543thecleansweep@gmail.com","url":"https://543thecleansweep.com/","logo":"https://543thecleansweep.com/assets/logo.png","image":"https://543thecleansweep.com/assets/logo.png","description":"Alaska Native-owned residential and commercial cleaning services in Bethel, Alaska.","address":{"@type":"PostalAddress","addressLocality":"Bethel","addressRegion":"AK","addressCountry":"US"},"areaServed":{"@type":"City","name":"Bethel, Alaska"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:00","closes":"17:00"}]}
 </script>
 <script defer src="/legacy-links.js"></script>
+<script defer src="/assets/three.min.js"></script>
+<script defer src="/canvas-renderer.js"></script>
+<script defer src="/room-scenes.js"></script>
+<script defer src="/walkthrough.js"></script>
 </head>
 <body>
 <a class="skip" href="#walkthrough">Skip to the walkthrough</a>
@@ -53,41 +54,50 @@
   </div>
 </header>
 <main id="home">
-  <section class="shell experience" id="walkthrough" aria-labelledby="headline">
+  <section class="shell experience experience--home" id="walkthrough" aria-labelledby="headline">
     <div class="intro">
       <p class="eyebrow origin"><span aria-hidden="true"></span> COMMERCIAL JANITORIAL · BETHEL</p>
       <h1 id="headline">INSIDE<br>THE <em>WORK.</em></h1>
       <p class="description">Walk through a sample cleaning job, room by room.</p>
     </div>
-    <div class="viewer" id="viewer" aria-label="Interactive model of an example office, breakroom, and restroom">
-      <div class="viewer-head">
-        <span class="eyebrow"><i class="status-light" aria-hidden="true"></i> SAMPLE FACILITY</span>
-        <div class="view-controls" aria-label="Model views">
-          <button type="button" data-view="orbit" aria-pressed="true">3D</button>
-          <button type="button" data-view="plan" aria-pressed="false">Plan</button>
+    <div class="viewer-stack">
+      <div class="viewer" id="viewer" aria-label="Interactive model of an example office, breakroom, and restroom">
+        <div class="viewer-head">
+          <span class="eyebrow"><i class="status-light" aria-hidden="true"></i> SAMPLE FACILITY</span>
+          <div class="view-controls" aria-label="Model views">
+            <button type="button" data-view="orbit" aria-pressed="true">3D</button>
+            <button type="button" data-view="plan" aria-pressed="false">Plan</button>
+          </div>
+        </div>
+        <div class="scene" id="scene" aria-hidden="true"><canvas id="model"></canvas></div>
+        <div class="hotspots" id="hotspots">
+          <button class="hotspot" type="button" hidden data-room="0" aria-label="Explore office"><span>01</span> Office</button>
+          <button class="hotspot" type="button" hidden data-room="1" aria-label="Explore breakroom"><span>02</span> Breakroom</button>
+          <button class="hotspot" type="button" hidden data-room="2" aria-label="Explore restroom"><span>03</span> Restroom</button>
+        </div>
+        <div class="viewer-foot">
+          <span id="view-hint"><i class="orbit-icon" aria-hidden="true">⤾</i> Drag to rotate</span>
+          <button class="reset-camera" type="button" aria-label="Reset the model to its original view">Reset view</button>
         </div>
       </div>
-      <div class="scene" id="scene" aria-hidden="true"><canvas id="model"></canvas></div>
-      <div class="hotspots" id="hotspots">
-        <button class="hotspot" type="button" hidden data-room="0" aria-label="Explore office"><span>01</span> Office</button>
-        <button class="hotspot" type="button" hidden data-room="1" aria-label="Explore breakroom"><span>02</span> Breakroom</button>
-        <button class="hotspot" type="button" hidden data-room="2" aria-label="Explore restroom"><span>03</span> Restroom</button>
-      </div>
-      <div class="viewer-foot">
-        <span id="view-hint"><i class="orbit-icon" aria-hidden="true">⤾</i> Drag to rotate</span>
-        <button class="reset-camera" type="button" aria-label="Reset the model to its original view">Reset view</button>
-      </div>
+      <nav class="service-paths" aria-label="Cleaning services">
+        <a href="/commercial/"><strong>Commercial cleaning</strong><span>Offices and facilities</span><i class="arrow" aria-hidden="true"></i></a>
+        <a href="/residential/"><strong>Residential cleaning</strong><span>Housekeeping and move-outs</span><i class="arrow" aria-hidden="true"></i></a>
+      </nav>
     </div>
     <aside class="console" aria-label="Cleaning walkthrough controls">
-      <div class="console-top"><span class="eyebrow">WALKTHROUGH</span><span class="progress" id="progress">0 / 3 COMPLETE</span></div>
+      <div class="console-top"><span class="eyebrow">WALKTHROUGH</span><span class="progress" id="progress" aria-live="polite">0 / 3 COMPLETE</span></div>
       <ol class="room-list">
         <li><button type="button" data-step="0"><span class="room-index">01</span> Office <span class="room-state" aria-hidden="true"></span></button></li>
         <li><button type="button" data-step="1"><span class="room-index">02</span> Breakroom <span class="room-state" aria-hidden="true"></span></button></li>
         <li><button type="button" data-step="2"><span class="room-index">03</span> Restroom <span class="room-state" aria-hidden="true"></span></button></li>
       </ol>
-      <div class="job-detail" id="job-detail" aria-live="polite">
-        <p id="job-heading">Recurring office cleaning</p>
-        <p id="job-copy">Select a room to see what goes on its cleaning checklist.</p>
+      <div class="job-detail">
+        <div class="checklist-heading">
+          <h2 id="job-heading">Office checklist</h2>
+          <p id="job-count" class="task-count" aria-live="polite"></p>
+        </div>
+        <ul class="task-list" id="job-tasks" aria-labelledby="job-heading"></ul>
       </div>
       <button class="demo-action" id="demo-action" type="button"><span>Start walkthrough</span><i class="arrow" aria-hidden="true"></i></button>
       <noscript><p>This walkthrough requires JavaScript.</p></noscript>
@@ -100,8 +110,6 @@
     </div>
     <div class="footer-actions">
       <a class="quote" href="/request/">Request a walkthrough <i class="arrow" aria-hidden="true"></i></a>
-      <a class="service-link" href="/commercial/">Commercial cleaning <i class="arrow" aria-hidden="true"></i></a>
-      <a class="service-link" href="/residential/">Residential cleaning <i class="arrow" aria-hidden="true"></i></a>
     </div>
   </section>
 </main>
