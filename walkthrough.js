@@ -577,7 +577,7 @@ function buildModel() {
     (roomMess[sceneName][index] || []).forEach((items, task) => {
       items.forEach((item, order) => {
         const object = messItem(g, item);
-        mess.push({object, task, order, keep:!!item.keep, appear:!!item.appear, amount:item.appear ? 0 : 0, target:0, startAt:0, sparked:true});
+        mess.push({object, task, order, keep:!!item.keep, appear:!!item.appear, amount:0, target:0, startAt:0, sparked:true});
         if (item.appear) object.visible = false;
       });
     });
@@ -598,6 +598,7 @@ function buildModel() {
   const worldPoint=new T.Vector3();
   let targetZoom=1;
   let idle=!reducedMotion.matches, onScreen=true;
+  const idleUntil=performance.now()+25000;
   new IntersectionObserver(entries => {
     onScreen = entries[0].isIntersecting;
     if (onScreen) schedule();
@@ -629,6 +630,7 @@ function buildModel() {
     const dt=last ? Math.min(time-last,36):16;
     last=time;
     const blend=reducedMotion.matches?1:1-Math.pow(.81,dt/16);
+    if (idle && time > idleUntil) { idle = false; lastOrbit = targetTheta; }
     if (idle && onScreen && active < 0 && currentView==='orbit') targetTheta = lastOrbit + Math.sin(time / 2400) * .13;
     theta+=(targetTheta-theta)*blend;
     elevation+=(targetElevation-elevation)*blend;
